@@ -1,5 +1,5 @@
 ///
-/// \class bcp::PayloadFactory
+/// \class ecalPh2::BCPPayloadFactory
 ///
 /// \author: Thomas Reis
 ///
@@ -13,16 +13,16 @@
 #include <iomanip>
 
 #include "FWCore/MessageLogger/interface/MessageLogger.h"
-#include "SimCalorimetry/EcalEBTrigPrimAlgos/interface/PayloadFactory.h"
-#include "SimCalorimetry/EcalEBTrigPrimAlgos/interface/PayloadV1.h"
+#include "SimCalorimetry/EcalEBTrigPrimAlgos/interface/BCPPayloadFactory.h"
+#include "SimCalorimetry/EcalEBTrigPrimAlgos/interface/BCPPayloadV1.h"
 
-bcp::PayloadFactory::ReturnType bcp::PayloadFactory::create(const unsigned int fwVersion, const edm::ParameterSet& config, const edm::EventSetup &eventSetup)
+ecalPh2::BCPPayloadFactory::ReturnType ecalPh2::BCPPayloadFactory::create(const unsigned int fwVersion, const edm::ParameterSet& config, const edm::EventSetup &eventSetup)
 {
   ReturnType payload;
   if (fwVersion >= 1) {
-    payload = std::make_unique<bcp::PayloadV1>(fwVersion, config, eventSetup);
+    payload = std::make_unique<ecalPh2::BCPPayloadV1>(fwVersion, config, eventSetup);
   } else {
-    edm::LogError("bcp::PayloadFactory") << "Invalid BCP payload FW version: 0x" << std::hex << std::setfill('0') << std::setw(8) << fwVersion << std::dec;
+    edm::LogError("ecalPh2::BCPPayloadFactory") << "Invalid BCP payload FW version: 0x" << std::hex << std::setfill('0') << std::setw(8) << fwVersion << std::dec;
   }
   return payload;
 }

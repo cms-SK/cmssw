@@ -1,21 +1,21 @@
-#ifndef SimCalorimetry_EcalEBTrigPrimAlgos_PayloadFactory_h
-#define SimCalorimetry_EcalEBTrigPrimAlgos_PayloadFactory_h
+#ifndef SimCalorimetry_EcalEBTrigPrimAlgos_BCPPayloadFactory_h
+#define SimCalorimetry_EcalEBTrigPrimAlgos_BCPPayloadFactory_h
 
 #include <memory>
 
-#include "SimCalorimetry/EcalEBTrigPrimAlgos/interface/Payload.h"
+#include "SimCalorimetry/EcalEBTrigPrimAlgos/interface/BCPPayload.h"
 
-namespace bcp {
+namespace ecalPh2 {
 
-class PayloadFactory {
+class BCPPayloadFactory {
  public:
-  PayloadFactory() {};
-  ~PayloadFactory() {};
+  BCPPayloadFactory() {};
+  ~BCPPayloadFactory() {};
 
-  typedef std::unique_ptr<Payload> ReturnType;
+  typedef std::unique_ptr<BCPPayload> ReturnType;
 
   ReturnType create(const unsigned int fwVersion, const edm::ParameterSet& config, const edm::EventSetup &eventSetup);
 };
 
-} // namespace bcp
+} // namespace ecalPh2
 #endif

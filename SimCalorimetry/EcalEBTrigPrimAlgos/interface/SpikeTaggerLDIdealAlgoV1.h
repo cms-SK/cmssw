@@ -7,7 +7,7 @@
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 #include "SimCalorimetry/EcalEBTrigPrimAlgos/interface/SpikeTaggerLDAlgo.h"
 
-namespace bcp {
+namespace ecalPh2 {
 
 class SpikeTaggerLDIdealAlgoV1 : public SpikeTaggerLDAlgo {
  public:
@@ -31,5 +31,5 @@ class SpikeTaggerLDIdealAlgoV1 : public SpikeTaggerLDAlgo {
   float calcRMinus1Poly(const EBDataFrame &frame) const;
 };
 
-} // namespace bcp
+} // namespace ecalPh2
 #endif

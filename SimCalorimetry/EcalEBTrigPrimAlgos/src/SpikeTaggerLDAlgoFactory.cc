@@ -1,5 +1,5 @@
 ///
-/// \class bcp::SpikeTaggerLDAlgoFactory
+/// \class ecalPh2::SpikeTaggerLDAlgoFactory
 ///
 /// \author: Thomas Reis
 ///
@@ -17,7 +17,7 @@
 
 #include "SimCalorimetry/EcalEBTrigPrimAlgos/interface/SpikeTaggerLDIdealAlgoV1.h"
 
-bcp::SpikeTaggerLDAlgoFactory::ReturnType bcp::SpikeTaggerLDAlgoFactory::create(const edm::ParameterSet& config, const edm::EventSetup &eventSetup)
+ecalPh2::SpikeTaggerLDAlgoFactory::ReturnType ecalPh2::SpikeTaggerLDAlgoFactory::create(const edm::ParameterSet& config, const edm::EventSetup &eventSetup)
 {
   ReturnType spikeTaggerLDAlgo;
 
@@ -33,7 +33,7 @@ bcp::SpikeTaggerLDAlgoFactory::ReturnType bcp::SpikeTaggerLDAlgoFactory::create(
   } else if (configSource == "fromModuleConfig") {
     ecalBcpPayloadParamsHelper->createFromPSet(config);
   } else {
-    edm::LogError("bcp::SpikeTaggerLDAlgoFactory") << "Unknown configuration source '" << configSource << "'";
+    edm::LogError("ecalPh2::SpikeTaggerLDAlgoFactory") << "Unknown configuration source '" << configSource << "'";
   }
   const auto algoType = ecalBcpPayloadParamsHelper->spikeTaggerLdType();
   const auto fwVersion = ecalBcpPayloadParamsHelper->version();
@@ -41,20 +41,20 @@ bcp::SpikeTaggerLDAlgoFactory::ReturnType bcp::SpikeTaggerLDAlgoFactory::create(
   // factory
   if (algoType == "ideal") {
     if (fwVersion >= 1) {
-      edm::LogInfo("bcp::SpikeTaggerLDAlgoFactory") << "Creating ideal spike tagger LD algo for FW version 0x" << std::hex << std::setfill('0') << std::setw(8) << fwVersion << std::dec;
-      spikeTaggerLDAlgo = std::make_unique<bcp::SpikeTaggerLDIdealAlgoV1>(config, eventSetup);
+      edm::LogInfo("ecalPh2::SpikeTaggerLDAlgoFactory") << "Creating ideal spike tagger LD algo for FW version 0x" << std::hex << std::setfill('0') << std::setw(8) << fwVersion << std::dec;
+      spikeTaggerLDAlgo = std::make_unique<ecalPh2::SpikeTaggerLDIdealAlgoV1>(config, eventSetup);
     } else {
-      edm::LogError("bcp::SpikeTaggerLDAlgoFactory") << "Invalid ideal spike tagger LD algo FW version: 0x" << std::hex << std::setfill('0') << std::setw(8) << fwVersion << std::dec;
+      edm::LogError("ecalPh2::SpikeTaggerLDAlgoFactory") << "Invalid ideal spike tagger LD algo FW version: 0x" << std::hex << std::setfill('0') << std::setw(8) << fwVersion << std::dec;
     }
   } else if (algoType == "hls") {
     if (fwVersion >= 1) {
-      edm::LogInfo("bcp::SpikeTaggerLDAlgoFactory") << "Creating HLS spike tagger LD algo for FW version 0x" << std::hex << std::setfill('0') << std::setw(8) << fwVersion << std::dec;
-      edm::LogWarning("bcp::SpikeTaggerLDAlgoFactory") << "HLS spike tagger LD algo not implemented yet";
+      edm::LogInfo("ecalPh2::SpikeTaggerLDAlgoFactory") << "Creating HLS spike tagger LD algo for FW version 0x" << std::hex << std::setfill('0') << std::setw(8) << fwVersion << std::dec;
+      edm::LogWarning("ecalPh2::SpikeTaggerLDAlgoFactory") << "HLS spike tagger LD algo not implemented yet";
     } else {
-      edm::LogError("bcp::SpikeTaggerLDAlgoFactory") << "Invalid HLS spike tagger LD algo FW version: 0x" << std::hex << std::setfill('0') << std::setw(8) << fwVersion << std::dec;
+      edm::LogError("ecalPh2::SpikeTaggerLDAlgoFactory") << "Invalid HLS spike tagger LD algo FW version: 0x" << std::hex << std::setfill('0') << std::setw(8) << fwVersion << std::dec;
     }
   } else {
-    edm::LogError("bcp::SpikeTaggerLDAlgoFactory") << "Invalid spike tagger LD algo type '" << algoType << "'";
+    edm::LogError("ecalPh2::SpikeTaggerLDAlgoFactory") << "Invalid spike tagger LD algo type '" << algoType << "'";
   }
 
   return spikeTaggerLDAlgo;

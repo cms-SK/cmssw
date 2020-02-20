@@ -6,7 +6,7 @@
 
 #include "SimCalorimetry/EcalEBTrigPrimAlgos/interface/SpikeTaggerLDAlgo.h"
 
-namespace bcp {
+namespace ecalPh2 {
 
 class SpikeTaggerLDAlgoFactory {
  public:
@@ -18,5 +18,5 @@ class SpikeTaggerLDAlgoFactory {
   ReturnType create(const edm::ParameterSet& config, const edm::EventSetup &eventSetup);
 };
 
-} // namespace bcp
+} // namespace ecalPh2
 #endif

@@ -34,7 +34,7 @@
 #include "CondFormats/DataRecord/interface/EcalBcpPayloadParamsRcd.h"
 #include "DataFormats/EcalDigi/interface/EcalDigiCollections.h"
 #include "SimCalorimetry/EcalEBTrigPrimAlgos/interface/EcalBcpPayloadParamsHelper.h"
-#include "SimCalorimetry/EcalEBTrigPrimAlgos/interface/PayloadFactory.h"
+#include "SimCalorimetry/EcalEBTrigPrimAlgos/interface/BCPPayloadFactory.h"
 
 //
 // class declaration
@@ -62,7 +62,7 @@ class EcalBarrelTPProducer : public edm::stream::EDProducer<> {
   edm::EDGetTokenT<EBDigiCollection> ebDigiToken_;
   edm::EDPutTokenT<EcalEBTrigPrimDigiCollection> ebTPToken_;
 
-  std::unique_ptr<bcp::Payload> payload_;
+  std::unique_ptr<ecalPh2::BCPPayload> payload_;
 };
 
 //
@@ -146,7 +146,7 @@ EcalBarrelTPProducer::beginRun(edm::Run const&, edm::EventSetup const &eventSetu
     fwVersion_ = newFwVersion;
 
     // build payload depending on current FW version
-    bcp::PayloadFactory factory;
+    ecalPh2::BCPPayloadFactory factory;
     payload_ = factory.create(fwVersion_, config_, eventSetup);
   }
 }

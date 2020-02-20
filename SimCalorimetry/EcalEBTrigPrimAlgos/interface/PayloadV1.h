@@ -1,15 +1,15 @@
-#ifndef SimCalorimetry_EcalEBTrigPrimAlgos_PayloadV1_h
-#define SimCalorimetry_EcalEBTrigPrimAlgos_PayloadV1_h
+#ifndef SimCalorimetry_EcalEBTrigPrimAlgos_BCPPayloadV1_h
+#define SimCalorimetry_EcalEBTrigPrimAlgos_BCPPayloadV1_h
 
-#include "SimCalorimetry/EcalEBTrigPrimAlgos/interface/Payload.h"
+#include "SimCalorimetry/EcalEBTrigPrimAlgos/interface/BCPPayload.h"
 #include "SimCalorimetry/EcalEBTrigPrimAlgos/interface/SpikeTaggerLDAlgo.h"
 
-namespace bcp {
+namespace ecalPh2 {
 
-class PayloadV1 : public Payload {
+class BCPPayloadV1 : public BCPPayload {
  public:
-  PayloadV1(const unsigned int fwVersion, const edm::ParameterSet& config, const edm::EventSetup &eventSetup) : Payload(fwVersion, config, eventSetup) { createAlgos(config, eventSetup); };
-  virtual ~PayloadV1() {};
+  BCPPayloadV1(const unsigned int fwVersion, const edm::ParameterSet& config, const edm::EventSetup &eventSetup) : BCPPayload(fwVersion, config, eventSetup) { createAlgos(config, eventSetup); };
+  virtual ~BCPPayloadV1() {};
 
   void processEvent(const EBDigiCollection &ebDigis, EcalEBTrigPrimDigiCollection &ebTPs) override;
 
@@ -19,5 +19,5 @@ class PayloadV1 : public Payload {
   std::unique_ptr<SpikeTaggerLDAlgo> spikeTaggerLDAlgo_;
 };
 
-} // namespace bcp
+} // namespace ecalPh2
 #endif

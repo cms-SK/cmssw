@@ -5,7 +5,7 @@
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 #include "DataFormats/EcalDigi/interface/EcalDigiCollections.h"
 
-namespace bcp {
+namespace ecalPh2 {
 
 class SpikeTaggerLDAlgo {
  public:
@@ -15,5 +15,5 @@ class SpikeTaggerLDAlgo {
   virtual void processEvent(const EBDigiCollection &ebDigis, EcalEBTrigPrimDigiCollection &ebTPs) = 0;
 };
 
-} // namespace bcp
+} // namespace ecalPh2
 #endif

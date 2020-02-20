@@ -1,5 +1,5 @@
 ///
-/// \class bcp::PayloadV1
+/// \class ecalPh2::BCPPayloadV1
 ///
 /// \author: Thomas Reis
 ///
@@ -11,18 +11,18 @@
 #include <vector>
 
 #include "FWCore/MessageLogger/interface/MessageLogger.h"
-#include "SimCalorimetry/EcalEBTrigPrimAlgos/interface/PayloadV1.h"
+#include "SimCalorimetry/EcalEBTrigPrimAlgos/interface/BCPPayloadV1.h"
 #include "SimCalorimetry/EcalEBTrigPrimAlgos/interface/SpikeTaggerLDAlgoFactory.h"
 
-void bcp::PayloadV1::processEvent(const EBDigiCollection &ebDigis, EcalEBTrigPrimDigiCollection &ebTPs)
+void ecalPh2::BCPPayloadV1::processEvent(const EBDigiCollection &ebDigis, EcalEBTrigPrimDigiCollection &ebTPs)
 {
-  std::cout << "Processing PayloadV1" << std::endl;
+  std::cout << "Processing BCPPayloadV1" << std::endl;
   spikeTaggerLDAlgo_->processEvent(ebDigis, ebTPs);
 }
 
-void bcp::PayloadV1::createAlgos(const edm::ParameterSet& config, const edm::EventSetup &eventSetup)
+void ecalPh2::BCPPayloadV1::createAlgos(const edm::ParameterSet& config, const edm::EventSetup &eventSetup)
 {
-  bcp::SpikeTaggerLDAlgoFactory spikeTaggerLDFactory;
+  ecalPh2::SpikeTaggerLDAlgoFactory spikeTaggerLDFactory;
 
   spikeTaggerLDAlgo_ = spikeTaggerLDFactory.create(config, eventSetup);
 }

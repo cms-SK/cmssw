@@ -1,5 +1,5 @@
 ///
-/// \class bcp::SpikeTaggerLDIdealAlgoV1
+/// \class ecalPh2::SpikeTaggerLDIdealAlgoV1
 ///
 /// \author: Thomas Reis
 /// 
@@ -15,7 +15,7 @@
 #include "SimCalorimetry/EcalEBTrigPrimAlgos/interface/EcalBcpPayloadParamsHelper.h"
 #include "SimCalorimetry/EcalEBTrigPrimAlgos/interface/SpikeTaggerLDIdealAlgoV1.h"
 
-bcp::SpikeTaggerLDIdealAlgoV1::SpikeTaggerLDIdealAlgoV1(const edm::ParameterSet& config, const edm::EventSetup &eventSetup) : SpikeTaggerLDAlgo(config, eventSetup)
+ecalPh2::SpikeTaggerLDIdealAlgoV1::SpikeTaggerLDIdealAlgoV1(const edm::ParameterSet& config, const edm::EventSetup &eventSetup) : SpikeTaggerLDAlgo(config, eventSetup)
 {
   std::unique_ptr<EcalBcpPayloadParamsHelper> ecalBcpPayloadParamsHelper;
 
@@ -30,7 +30,7 @@ bcp::SpikeTaggerLDIdealAlgoV1::SpikeTaggerLDIdealAlgoV1(const edm::ParameterSet&
   } else if (configSource == "fromModuleConfig") {
     ecalBcpPayloadParamsHelper->createFromPSet(config);
   } else {
-    edm::LogError("bcp::SpikeTaggerLDIdealAlgoV1") << "Unknown configuration source '" << configSource << "'";
+    edm::LogError("ecalPh2::SpikeTaggerLDIdealAlgoV1") << "Unknown configuration source '" << configSource << "'";
   }
 
   //TODO per crystal parameters
@@ -40,7 +40,7 @@ bcp::SpikeTaggerLDIdealAlgoV1::SpikeTaggerLDIdealAlgoV1(const edm::ParameterSet&
   weights_ = ecalBcpPayloadParamsHelper->spikeTaggerLdWeights();
 }
 
-void bcp::SpikeTaggerLDIdealAlgoV1::processEvent(const EBDigiCollection &ebDigis, EcalEBTrigPrimDigiCollection &ebTPs)
+void ecalPh2::SpikeTaggerLDIdealAlgoV1::processEvent(const EBDigiCollection &ebDigis, EcalEBTrigPrimDigiCollection &ebTPs)
 {
   std::cout << "Processing SpikeTaggerLDIdealAlgoV1" << std::endl;
   std::cout << "This frame has size: " << ebDigis.size() << std::endl;
@@ -67,7 +67,7 @@ void bcp::SpikeTaggerLDIdealAlgoV1::processEvent(const EBDigiCollection &ebDigis
   }
 }
 
-float bcp::SpikeTaggerLDIdealAlgoV1::calcLD(const EBDataFrame &frame) const
+float ecalPh2::SpikeTaggerLDIdealAlgoV1::calcLD(const EBDataFrame &frame) const
 {
   const auto sPlus1 = gains_[frame[peakIdx_ + 1].gainId()] * frame[peakIdx_ + 1].adc();
   const auto sMax = gains_[frame[peakIdx_].gainId()] * frame[peakIdx_].adc();
@@ -76,7 +76,7 @@ float bcp::SpikeTaggerLDIdealAlgoV1::calcLD(const EBDataFrame &frame) const
   return rPlus1 - calcRMinus1Poly(frame);
 }
 
-float bcp::SpikeTaggerLDIdealAlgoV1::calcRMinus1Poly(const EBDataFrame &frame) const
+float ecalPh2::SpikeTaggerLDIdealAlgoV1::calcRMinus1Poly(const EBDataFrame &frame) const
 {
   const auto sMinus1 = gains_[frame[peakIdx_ - 1].gainId()] * frame[peakIdx_ - 1].adc();
   const auto sMax = gains_[frame[peakIdx_].gainId()] * frame[peakIdx_].adc();

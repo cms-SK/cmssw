@@ -1,16 +1,16 @@
-#ifndef SimCalorimetry_EcalEBTrigPrimAlgos_Payload_h
-#define SimCalorimetry_EcalEBTrigPrimAlgos_Payload_h
+#ifndef SimCalorimetry_EcalEBTrigPrimAlgos_BCPPayload_h
+#define SimCalorimetry_EcalEBTrigPrimAlgos_BCPPayload_h
 
 #include "FWCore/Framework/interface/EventSetup.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 #include "DataFormats/EcalDigi/interface/EcalDigiCollections.h"
 
-namespace bcp {
+namespace ecalPh2 {
 
-class Payload {
+class BCPPayload {
  public:
-  Payload(const unsigned int fwVersion, const edm::ParameterSet& config, const edm::EventSetup &eventSetup) : fwVersion_(fwVersion) {};
-  virtual ~Payload() {};
+  BCPPayload(const unsigned int fwVersion, const edm::ParameterSet& config, const edm::EventSetup &eventSetup) : fwVersion_(fwVersion) {};
+  virtual ~BCPPayload() {};
 
   virtual void processEvent(const EBDigiCollection &ebDigis, EcalEBTrigPrimDigiCollection &ebTPs) = 0;
 
@@ -20,5 +20,5 @@ class Payload {
   unsigned int fwVersion_;
 };
 
-} // namespace bcp
+} // namespace ecalPh2
 #endif
