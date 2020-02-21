@@ -346,6 +346,7 @@
 <!-- base class -->
 <class name="EcalBcpPayloadParams">
    <field name="nodes_" mapping="blob"/>
+   <field name="crystalNodes_" mapping="blob"/>
 </class>
 <class name="EcalBcpPayloadParams::Node">
    <field name="dparams_" mapping="blob"/>
@@ -353,5 +354,14 @@
    <field name="sparams_" mapping="blob"/>
    <field name="uparams_" mapping="blob"/>
 </class>
+<!-- templates for EcalCondObjectContainer having the class as template parameter -->
+<class name="std::vector<std::vector<ecalBcpPayloadParams::Node>>"/>
+<class name="EcalContainer<EBDetId, std::vector<EcalBcpPayloadParams::Node>>"/>
+<class name="EcalContainer<EEDetId, std::vector<EcalBcpPayloadParams::Node>>"/>
+<class name="EcalCondObjectContainer<std::vector<EcalBcpPayloadParams::Node>>">
+   <field name = "eb_" mapping = "blob"/>
+   <field name = "ee_" mapping = "blob"/>
+</class>
+
 
 </lcgdict>

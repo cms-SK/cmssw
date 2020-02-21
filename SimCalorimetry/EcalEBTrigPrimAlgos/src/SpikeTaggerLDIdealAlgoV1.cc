@@ -17,8 +17,6 @@
 
 ecalPh2::SpikeTaggerLDIdealAlgoV1::SpikeTaggerLDIdealAlgoV1(const edm::ParameterSet& config, const edm::EventSetup &eventSetup) : SpikeTaggerLDAlgo(config, eventSetup)
 {
-  std::unique_ptr<EcalBcpPayloadParamsHelper> ecalBcpPayloadParamsHelper;
-
   const auto configSource = config.getParameter<std::string>("configSource");
   if (configSource == "fromES") {
     // getting algo parameters from ES
@@ -26,18 +24,12 @@ ecalPh2::SpikeTaggerLDIdealAlgoV1::SpikeTaggerLDIdealAlgoV1(const edm::Parameter
     edm::ESHandle<EcalBcpPayloadParams> paramsHandle;
     paramsRcd.get(paramsHandle);
 
-    ecalBcpPayloadParamsHelper = std::make_unique<EcalBcpPayloadParamsHelper>(*paramsHandle.product());
+    ecalBcpPayloadParamsHelper_ = std::make_unique<EcalBcpPayloadParamsHelper>(*paramsHandle.product());
   } else if (configSource == "fromModuleConfig") {
-    ecalBcpPayloadParamsHelper->createFromPSet(config);
+    ecalBcpPayloadParamsHelper_->createFromPSet(config);
   } else {
     edm::LogError("ecalPh2::SpikeTaggerLDIdealAlgoV1") << "Unknown configuration source '" << configSource << "'";
   }
-
-  //TODO per crystal parameters
-  gains_ = { {12., 1., 2., 12.} }; // TIA gains (Currently old gain values. Phase 2 will have only two gains.)
-  peakIdx_ = ecalBcpPayloadParamsHelper->sampleOfInterest();
-  spikeThreshold_ = ecalBcpPayloadParamsHelper->spikeTaggerLdThreshold();
-  weights_ = ecalBcpPayloadParamsHelper->spikeTaggerLdWeights();
 }
 
 void ecalPh2::SpikeTaggerLDIdealAlgoV1::processEvent(const EBDigiCollection &ebDigis, EcalEBTrigPrimDigiCollection &ebTPs)
@@ -49,9 +41,18 @@ void ecalPh2::SpikeTaggerLDIdealAlgoV1::processEvent(const EBDigiCollection &ebD
     EBDataFrame ebDigi = ebDigis[i];
     auto ebDigiId = ebDigi.id();
     std::cout << "digi " << i << ": rawId=" << ebDigiId.rawId() << ", nSamples=" << ebDigi.size() << ", ieta=" << ebDigiId.ieta() << ", iphi=" << ebDigiId.iphi() << std::endl;
+
+    // get the algo parameters for this crystal
+    //TODO per crystal gains from ES
+    gains_ = { {12., 1., 2., 12.} }; // TIA gains (Currently old gain values. Phase 2 will have only two gains.)
+    peakIdx_ = ecalBcpPayloadParamsHelper_->sampleOfInterest(ebDigiId);
+    spikeThreshold_ = ecalBcpPayloadParamsHelper_->spikeTaggerLdThreshold(ebDigiId);
+    weights_ = ecalBcpPayloadParamsHelper_->spikeTaggerLdWeights(ebDigiId);
+
+    // loop over samples
     for (int j = 0; j < ebDigi.size(); ++j) {
-      auto adcCounts = ebDigi[j].adc();
-      auto gainId = ebDigi[j].gainId();
+      const auto adcCounts = ebDigi[j].adc();
+      const auto gainId = ebDigi[j].gainId();
       float linearlisedCounts = gains_[gainId] * adcCounts;
       std::cout << "digi " << i << ", sample " << j << ": ADC counts=" << adcCounts << ", gain id=" << gainId << ", lin. counts=" << linearlisedCounts << std::endl;
     }
@@ -63,7 +64,7 @@ void ecalPh2::SpikeTaggerLDIdealAlgoV1::processEvent(const EBDigiCollection &ebD
     auto encodedEt = ebTPPeakSample.encodedEt();
     auto l1aSpike = ebTPPeakSample.l1aSpike() & (ld < spikeThreshold_);
     auto time = ebTPPeakSample.time();
-    ebTPs[i].setSample(peakIdx_, EcalEBTriggerPrimitiveSample(encodedEt,l1aSpike,time));
+    ebTPs[i].setSample(peakIdx_, EcalEBTriggerPrimitiveSample(encodedEt, l1aSpike, time));
   }
 }
 

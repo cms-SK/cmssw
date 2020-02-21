@@ -17,6 +17,9 @@ class SpikeTaggerLDIdealAlgoV1 : public SpikeTaggerLDAlgo {
   void processEvent(const EBDigiCollection &ebDigis, EcalEBTrigPrimDigiCollection &ebTPs) override;
 
  private:
+  // object holding the configuration
+  std::unique_ptr<EcalBcpPayloadParamsHelper> ecalBcpPayloadParamsHelper_;
+
   // returns true if the signal shape for this crystal matches a spike
   bool isSpike();
 

@@ -55,15 +55,32 @@ process.ecalBcpPayloadParamsSource = cms.ESSource("EmptyESSource",
 
 process.ecalBcpPayloadParamsEsProducer = cms.ESProducer("EcalBcpPayloadParamsESProducer",
     configSource = cms.string("fromModuleConfig"), # use "fromDB" for parameters from DB
+
     # configuration below is only active when configSource is set to "fromModuleConfig"
     fwVersion = cms.uint32(1),
-    sampleOfInterest = cms.uint32(6),
+
+    # samples of interest configurable for each crystal
+    samplesOfInterest = cms.VPSet(
+        cms.PSet(
+            ietaRange = cms.string(":"), # Example range formats "ietaMin:ietaMax", e.g. "-85:42" (user defined), "1:" (positive side), ":" (whole EB eta range)
+            iphiRange = cms.string(":"), # Example range formats "ietaMin:ietaMax", e.g. "90:270" (user defined), ":180" (MIN_IPHI:180), ":" (MIN_IPHI:MAX_IPHI)
+            sampleOfInterest = cms.uint32(6)
+        )
+    ),
+
+    # configuration PSets for the individual payload algorithms
     algoConfigs = cms.VPSet(
         cms.PSet(
             algo = cms.string("spikeTaggerLd"),
             type = cms.string("ideal"), # ideal, hls
-            spikeThreshold = cms.double(-0.1),
-            weights = cms.vdouble(1.5173, -2.1034, 1.8117, -0.6451)
+            perCrystalParams = cms.VPSet(
+                cms.PSet(
+                    ietaRange = cms.string(":"), # Example range formats "ietaMin:ietaMax", e.g. "-85:42" (user defined), "1:" (positive side), ":" (whole EB eta range)
+                    iphiRange = cms.string(":"), # Example range formats "ietaMin:ietaMax", e.g. "90:270" (user defined), ":180" (MIN_IPHI:180), ":" (MIN_IPHI:MAX_IPHI)
+                    spikeThreshold = cms.double(-0.1),
+                    weights = cms.vdouble(1.5173, -2.1034, 1.8117, -0.6451)
+                )
+            )
         ),
     )
 )
@@ -75,15 +92,32 @@ process.simEcalBarrelTPDigis = cms.EDProducer("EcalBarrelTPProducer",
 #    barrelEcalDigis = cms.InputTag("simEcalUnsuppressedDigis","ebDigis"),
 #    barrelEcalDigis = cms.InputTag("selectDigi","selectedEcalEBDigiCollection"),
     barrelEcalDigis = cms.InputTag("simEcalDigis","ebDigis"),
+
     # configuration below is only active when configSource is set to "fromModuleConfig"
     fwVersion = cms.uint32(1),
-    sampleOfInterest = cms.uint32(6),
+
+    # samples of interest configurable for each crystal
+    samplesOfInterest = cms.VPSet(
+        cms.PSet(
+            ietaRange = cms.string(":"), # Example range formats "ietaMin:ietaMax", e.g. "-85:42" (user defined), "1:" (positive side), ":" (whole EB eta range)
+            iphiRange = cms.string(":"), # Example range formats "ietaMin:ietaMax", e.g. "90:270" (user defined), ":180" (MIN_IPHI:180), ":" (MIN_IPHI:MAX_IPHI)
+            sampleOfInterest = cms.uint32(6)
+        )
+    ),
+
+    # configuration PSets for the individual payload algorithms
     algoConfigs = cms.VPSet(
         cms.PSet(
             algo = cms.string("spikeTaggerLd"),
             type = cms.string("ideal"), # ideal, hls
-            spikeThreshold = cms.double(-0.1),
-            weights = cms.vdouble(1.5173, -2.1034, 1.8117, -0.6451)
+            perCrystalParams = cms.VPSet(
+                cms.PSet(
+                    ietaRange = cms.string("-85:85"), # Example range formats "ietaMin:ietaMax", e.g. "-85:42" (user defined), "1:" (positive side), ":" (whole EB eta range)
+                    iphiRange = cms.string("1:360"), # Example range formats "ietaMin:ietaMax", e.g. "90:270" (user defined), ":180" (MIN_IPHI:180), ":" (MIN_IPHI:MAX_IPHI)
+                    spikeThreshold = cms.double(-0.1),
+                    weights = cms.vdouble(1.5173, -2.1034, 1.8117, -0.6451)
+                )
+            )
         ),
     )
 )

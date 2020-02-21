@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 
+#include "CondFormats/EcalObjects/interface/EcalCondObjectContainer.h"
 #include "CondFormats/Serialization/interface/Serializable.h"
 
 class EcalBcpPayloadParams {
@@ -29,8 +30,14 @@ class EcalBcpPayloadParams {
   void setVersion(const unsigned int version) { version_ = version; };
 
  protected:
+  // conditions version
   unsigned int version_;
+
+  // global parameters
   std::vector<Node> nodes_;
+
+  // per crystal parameters
+  EcalCondObjectContainer<std::vector<Node>> crystalNodes_;
 
   COND_SERIALIZABLE;
 };
