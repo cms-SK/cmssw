@@ -53,17 +53,7 @@ EcalBcpPayloadParamsESProducer::EcalBcpPayloadParamsESProducer(const edm::Parame
 {
   setWhatProduced(this);
 
-  EcalBcpPayloadParamsHelper paramsHelper;
-
-  // Get the parameters from the DB or from the python configuration
-  const auto configSource = iConfig.getParameter<std::string>("configSource");
-  if (configSource == "fromDB") {
-    // TODO implement DB interface
-  } else if (configSource == "fromModuleConfig") {
-    paramsHelper.createFromPSet(iConfig);
-  } else {
-    std::cout << "Unknown config source" << std::endl;
-  }
+  EcalBcpPayloadParamsHelper paramsHelper(iConfig);
   params_ = static_cast<EcalBcpPayloadParams>(paramsHelper);
 }
 

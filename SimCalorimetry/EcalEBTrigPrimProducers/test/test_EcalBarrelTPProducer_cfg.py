@@ -54,9 +54,6 @@ process.ecalBcpPayloadParamsSource = cms.ESSource("EmptyESSource",
 )
 
 process.ecalBcpPayloadParamsEsProducer = cms.ESProducer("EcalBcpPayloadParamsESProducer",
-    configSource = cms.string("fromModuleConfig"), # use "fromDB" for parameters from DB
-
-    # configuration below is only active when configSource is set to "fromModuleConfig"
     fwVersion = cms.uint32(1),
 
     # samples of interest configurable for each crystal

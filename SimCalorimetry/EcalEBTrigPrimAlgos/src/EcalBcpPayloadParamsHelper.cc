@@ -24,7 +24,8 @@ EcalBcpPayloadParamsHelper::EcalBcpPayloadParamsHelper(const EcalBcpPayloadParam
 }
 
 EcalBcpPayloadParamsHelper::EcalBcpPayloadParamsHelper(const edm::ParameterSet &config) {
-  this->createFromPSet(config);
+  nodes_.resize(NUM_NODES);
+  createFromPSet(config);
 }
 
 void EcalBcpPayloadParamsHelper::createFromPSet(const edm::ParameterSet &config)
@@ -38,7 +39,7 @@ void EcalBcpPayloadParamsHelper::createFromPSet(const edm::ParameterSet &config)
   for (const auto &algoConfig : algoConfigs) {
     const auto algo = algoConfig.getParameter<std::string>("algo");
     if (algo == "spikeTaggerLd") {
-      this->setSpikeTaggerLdType(algoConfig.getParameter<std::string>("type"));
+      setSpikeTaggerLdType(algoConfig.getParameter<std::string>("type"));
       setPerCrystalSpikeTaggerParams(algoConfig.getParameter<std::vector<edm::ParameterSet>>("perCrystalParams"));
     } else if (algo == "someOtherAlgo") {
       // get some other algo configuration parameters
