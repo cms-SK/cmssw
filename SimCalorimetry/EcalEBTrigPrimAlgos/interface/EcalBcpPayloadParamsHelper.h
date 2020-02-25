@@ -8,6 +8,8 @@
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 #include "CondFormats/EcalObjects/interface/EcalBcpPayloadParams.h"
 
+namespace ecalPh2 {
+
 class EcalBcpPayloadParamsHelper : public EcalBcpPayloadParams {
  public:
   EcalBcpPayloadParamsHelper();
@@ -18,6 +20,9 @@ class EcalBcpPayloadParamsHelper : public EcalBcpPayloadParams {
   void createFromPSet(const edm::ParameterSet& config);
 
   // Global parameters
+  unsigned int fwVersion() const;
+  void setFwVersion(const unsigned int fwVersion);
+
   unsigned int sampleOfInterest(const EBDetId &detId) const;
   void setSampleOfInterest(const EBDetId &detId, const unsigned int soi);
 
@@ -39,7 +44,7 @@ class EcalBcpPayloadParamsHelper : public EcalBcpPayloadParams {
   // Defines the content of each node
   // New nodes can only be added before NUM_NODES
   enum EcalBcpPayloadParamNode {
-    kGlobalAlgoParams = 0, // assuming there will be some global parameters valid for all crystals
+    kGlobalAlgoParams = 0,
     kGlobalSpikeTaggerLdParams,
     NUM_NODES
   };
@@ -55,7 +60,7 @@ class EcalBcpPayloadParamsHelper : public EcalBcpPayloadParams {
 
   // index of variabe inside a node vector
   enum DIdx {kSpikeThreshold = 0};
-  enum UIdx {kSampleOfInterest = 0};
+  enum UIdx {kFwVersion = 0, kSampleOfInterest = 0};
   enum IIdx {};
   enum SIdx {kSpikeTaggerLdType = 0};
 
@@ -64,4 +69,5 @@ class EcalBcpPayloadParamsHelper : public EcalBcpPayloadParams {
   void parseCrystalRange(const std::string &rangeStr, int &iMin, int &iMax, const bool isEta = true);
 };
 
+} // namespace ecalPh2
 #endif

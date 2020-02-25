@@ -20,10 +20,10 @@ void ecalPh2::BCPPayloadV1::processEvent(const EBDigiCollection &ebDigis, EcalEB
   spikeTaggerLDAlgo_->processEvent(ebDigis, ebTPs);
 }
 
-void ecalPh2::BCPPayloadV1::createAlgos(const edm::ParameterSet& config, const edm::EventSetup &eventSetup)
+void ecalPh2::BCPPayloadV1::createAlgos(const edm::EventSetup &eventSetup)
 {
   ecalPh2::SpikeTaggerLDAlgoFactory spikeTaggerLDFactory;
 
-  spikeTaggerLDAlgo_ = spikeTaggerLDFactory.create(config, eventSetup);
+  spikeTaggerLDAlgo_ = spikeTaggerLDFactory.create(ecalBcpPayloadParamsHelper_, eventSetup);
 }
 

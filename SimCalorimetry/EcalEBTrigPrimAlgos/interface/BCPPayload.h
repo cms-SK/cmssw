@@ -4,20 +4,22 @@
 #include "FWCore/Framework/interface/EventSetup.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 #include "DataFormats/EcalDigi/interface/EcalDigiCollections.h"
+#include "SimCalorimetry/EcalEBTrigPrimAlgos/interface/EcalBcpPayloadParamsHelper.h"
 
 namespace ecalPh2 {
 
 class BCPPayload {
  public:
-  BCPPayload(const unsigned int fwVersion, const edm::ParameterSet& config, const edm::EventSetup &eventSetup) : fwVersion_(fwVersion) {};
+  BCPPayload(const std::shared_ptr<ecalPh2::EcalBcpPayloadParamsHelper> ecalBcpPayloadParamsHelper, const edm::EventSetup &eventSetup) : ecalBcpPayloadParamsHelper_(ecalBcpPayloadParamsHelper) {};
   virtual ~BCPPayload() {};
 
   virtual void processEvent(const EBDigiCollection &ebDigis, EcalEBTrigPrimDigiCollection &ebTPs) = 0;
 
  protected:
-  virtual void createAlgos(const edm::ParameterSet& config, const edm::EventSetup &eventSetup) = 0;
+  // object holding the configuration
+  const std::shared_ptr<ecalPh2::EcalBcpPayloadParamsHelper> ecalBcpPayloadParamsHelper_;
 
-  unsigned int fwVersion_;
+  virtual void createAlgos(const edm::EventSetup &eventSetup) = 0;
 };
 
 } // namespace ecalPh2

@@ -8,13 +8,13 @@ namespace ecalPh2 {
 
 class BCPPayloadV1 : public BCPPayload {
  public:
-  BCPPayloadV1(const unsigned int fwVersion, const edm::ParameterSet& config, const edm::EventSetup &eventSetup) : BCPPayload(fwVersion, config, eventSetup) { createAlgos(config, eventSetup); };
+  BCPPayloadV1(const std::shared_ptr<ecalPh2::EcalBcpPayloadParamsHelper> ecalBcpPayloadParamsHelper, const edm::EventSetup &eventSetup) : BCPPayload(ecalBcpPayloadParamsHelper, eventSetup) { createAlgos(eventSetup); };
   virtual ~BCPPayloadV1() {};
 
   void processEvent(const EBDigiCollection &ebDigis, EcalEBTrigPrimDigiCollection &ebTPs) override;
 
  protected:
-  void createAlgos(const edm::ParameterSet& config, const edm::EventSetup &eventSetup) override;
+  void createAlgos(const edm::EventSetup &eventSetup) override;
 
   std::unique_ptr<SpikeTaggerLDAlgo> spikeTaggerLDAlgo_;
 };

@@ -15,21 +15,8 @@
 #include "SimCalorimetry/EcalEBTrigPrimAlgos/interface/EcalBcpPayloadParamsHelper.h"
 #include "SimCalorimetry/EcalEBTrigPrimAlgos/interface/SpikeTaggerLDIdealAlgoV1.h"
 
-ecalPh2::SpikeTaggerLDIdealAlgoV1::SpikeTaggerLDIdealAlgoV1(const edm::ParameterSet& config, const edm::EventSetup &eventSetup) : SpikeTaggerLDAlgo(config, eventSetup)
+ecalPh2::SpikeTaggerLDIdealAlgoV1::SpikeTaggerLDIdealAlgoV1(const std::shared_ptr<ecalPh2::EcalBcpPayloadParamsHelper> ecalBcpPayloadParamsHelper, const edm::EventSetup &eventSetup) : SpikeTaggerLDAlgo(ecalBcpPayloadParamsHelper, eventSetup)
 {
-  const auto configSource = config.getParameter<std::string>("configSource");
-  if (configSource == "fromES") {
-    // getting algo parameters from ES
-    const auto &paramsRcd = eventSetup.get<EcalBcpPayloadParamsRcd>();
-    edm::ESHandle<EcalBcpPayloadParams> paramsHandle;
-    paramsRcd.get(paramsHandle);
-
-    ecalBcpPayloadParamsHelper_ = std::make_unique<EcalBcpPayloadParamsHelper>(*paramsHandle.product());
-  } else if (configSource == "fromModuleConfig") {
-    ecalBcpPayloadParamsHelper_->createFromPSet(config);
-  } else {
-    edm::LogError("ecalPh2::SpikeTaggerLDIdealAlgoV1") << "Unknown configuration source '" << configSource << "'";
-  }
 }
 
 void ecalPh2::SpikeTaggerLDIdealAlgoV1::processEvent(const EBDigiCollection &ebDigis, EcalEBTrigPrimDigiCollection &ebTPs)

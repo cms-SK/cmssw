@@ -4,15 +4,20 @@
 #include "FWCore/Framework/interface/EventSetup.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 #include "DataFormats/EcalDigi/interface/EcalDigiCollections.h"
+#include "SimCalorimetry/EcalEBTrigPrimAlgos/interface/EcalBcpPayloadParamsHelper.h"
 
 namespace ecalPh2 {
 
 class SpikeTaggerLDAlgo {
  public:
-  SpikeTaggerLDAlgo(const edm::ParameterSet& config, const edm::EventSetup &eventSetup) {};
+  SpikeTaggerLDAlgo(const std::shared_ptr<ecalPh2::EcalBcpPayloadParamsHelper> ecalBcpPayloadParamsHelper, const edm::EventSetup &eventSetup) : ecalBcpPayloadParamsHelper_(ecalBcpPayloadParamsHelper) {};
   virtual ~SpikeTaggerLDAlgo() {};
 
   virtual void processEvent(const EBDigiCollection &ebDigis, EcalEBTrigPrimDigiCollection &ebTPs) = 0;
+
+ protected:
+  // object holding the configuration
+  const std::shared_ptr<EcalBcpPayloadParamsHelper> ecalBcpPayloadParamsHelper_;
 };
 
 } // namespace ecalPh2

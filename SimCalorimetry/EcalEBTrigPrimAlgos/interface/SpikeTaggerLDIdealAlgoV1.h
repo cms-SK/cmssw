@@ -11,15 +11,12 @@ namespace ecalPh2 {
 
 class SpikeTaggerLDIdealAlgoV1 : public SpikeTaggerLDAlgo {
  public:
-  SpikeTaggerLDIdealAlgoV1(const edm::ParameterSet& config, const edm::EventSetup &eventSetup);
+  SpikeTaggerLDIdealAlgoV1(const std::shared_ptr<ecalPh2::EcalBcpPayloadParamsHelper> ecalBcpPayloadParamsHelper, const edm::EventSetup &eventSetup);
   ~SpikeTaggerLDIdealAlgoV1() override {};
 
   void processEvent(const EBDigiCollection &ebDigis, EcalEBTrigPrimDigiCollection &ebTPs) override;
 
  private:
-  // object holding the configuration
-  std::unique_ptr<EcalBcpPayloadParamsHelper> ecalBcpPayloadParamsHelper_;
-
   // returns true if the signal shape for this crystal matches a spike
   bool isSpike();
 

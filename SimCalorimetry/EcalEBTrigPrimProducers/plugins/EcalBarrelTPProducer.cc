@@ -62,6 +62,7 @@ class EcalBarrelTPProducer : public edm::stream::EDProducer<> {
   edm::EDGetTokenT<EBDigiCollection> ebDigiToken_;
   edm::EDPutTokenT<EcalEBTrigPrimDigiCollection> ebTPToken_;
 
+  std::shared_ptr<ecalPh2::EcalBcpPayloadParamsHelper> ecalBcpPayloadParamsHelper_;
   std::unique_ptr<ecalPh2::BCPPayload> payload_;
 };
 
@@ -133,21 +134,21 @@ EcalBarrelTPProducer::beginRun(edm::Run const&, edm::EventSetup const &eventSetu
     edm::ESHandle<EcalBcpPayloadParams> paramsHandle;
     paramsRcd.get(paramsHandle);
 
-    auto ecalBcpPayloadParamsHelper = std::make_unique<EcalBcpPayloadParamsHelper>(*paramsHandle.product());
-    newFwVersion = ecalBcpPayloadParamsHelper->version();
+    ecalBcpPayloadParamsHelper_ = std::make_shared<ecalPh2::EcalBcpPayloadParamsHelper>(*paramsHandle.product());
   } else if (configSource == "fromModuleConfig") {
-    newFwVersion = config_.getParameter<unsigned int>("fwVersion");
+    ecalBcpPayloadParamsHelper_ = std::make_shared<ecalPh2::EcalBcpPayloadParamsHelper>(config_);
   } else {
     edm::LogError("EcalBarrelTPProducer") << "Unknown configuration source '" << configSource << "'";
   }
 
+  newFwVersion = ecalBcpPayloadParamsHelper_->fwVersion();
   // rebuild the payload algos if the FW version has changed
   if (newFwVersion != fwVersion_) {
     fwVersion_ = newFwVersion;
 
     // build payload depending on current FW version
     ecalPh2::BCPPayloadFactory factory;
-    payload_ = factory.create(fwVersion_, config_, eventSetup);
+    payload_ = factory.create(ecalBcpPayloadParamsHelper_, eventSetup);
   }
 }
 

@@ -16,13 +16,13 @@
 #include "SimCalorimetry/EcalEBTrigPrimAlgos/interface/BCPPayloadFactory.h"
 #include "SimCalorimetry/EcalEBTrigPrimAlgos/interface/BCPPayloadV1.h"
 
-ecalPh2::BCPPayloadFactory::ReturnType ecalPh2::BCPPayloadFactory::create(const unsigned int fwVersion, const edm::ParameterSet& config, const edm::EventSetup &eventSetup)
+ecalPh2::BCPPayloadFactory::ReturnType ecalPh2::BCPPayloadFactory::create(const std::shared_ptr<ecalPh2::EcalBcpPayloadParamsHelper> ecalBcpPayloadParamsHelper, const edm::EventSetup &eventSetup)
 {
   ReturnType payload;
-  if (fwVersion >= 1) {
-    payload = std::make_unique<ecalPh2::BCPPayloadV1>(fwVersion, config, eventSetup);
+  if (ecalBcpPayloadParamsHelper->fwVersion() >= 1) {
+    payload = std::make_unique<ecalPh2::BCPPayloadV1>(ecalBcpPayloadParamsHelper, eventSetup);
   } else {
-    edm::LogError("ecalPh2::BCPPayloadFactory") << "Invalid BCP payload FW version: 0x" << std::hex << std::setfill('0') << std::setw(8) << fwVersion << std::dec;
+    edm::LogError("ecalPh2::BCPPayloadFactory") << "Invalid BCP payload FW version: 0x" << std::hex << std::setfill('0') << std::setw(8) << ecalBcpPayloadParamsHelper->fwVersion() << std::dec;
   }
   return payload;
 }

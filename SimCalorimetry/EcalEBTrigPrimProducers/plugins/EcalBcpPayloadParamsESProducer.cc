@@ -53,7 +53,7 @@ EcalBcpPayloadParamsESProducer::EcalBcpPayloadParamsESProducer(const edm::Parame
 {
   setWhatProduced(this);
 
-  EcalBcpPayloadParamsHelper paramsHelper(iConfig);
+  ecalPh2::EcalBcpPayloadParamsHelper paramsHelper(iConfig);
   params_ = static_cast<EcalBcpPayloadParams>(paramsHelper);
 }
 
