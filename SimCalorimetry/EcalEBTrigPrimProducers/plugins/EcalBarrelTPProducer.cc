@@ -126,8 +126,7 @@ EcalBarrelTPProducer::endStream() {
 void
 EcalBarrelTPProducer::beginRun(edm::Run const&, edm::EventSetup const &eventSetup)
 {
-  // get the FW version for this run
-  auto newFwVersion = fwVersion_;
+  // get the configuration
   const auto configSource = config_.getParameter<std::string>("configSource");
   if (configSource == "fromES") {
     const auto &paramsRcd = eventSetup.get<EcalBcpPayloadParamsRcd>();
@@ -141,8 +140,8 @@ EcalBarrelTPProducer::beginRun(edm::Run const&, edm::EventSetup const &eventSetu
     edm::LogError("EcalBarrelTPProducer") << "Unknown configuration source '" << configSource << "'";
   }
 
-  newFwVersion = ecalBcpPayloadParamsHelper_->fwVersion();
   // rebuild the payload algos if the FW version has changed
+  auto newFwVersion = ecalBcpPayloadParamsHelper_->fwVersion();
   if (newFwVersion != fwVersion_) {
     fwVersion_ = newFwVersion;
 

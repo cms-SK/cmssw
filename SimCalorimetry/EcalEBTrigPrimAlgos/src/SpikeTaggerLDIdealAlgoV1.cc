@@ -49,8 +49,9 @@ void ecalPh2::SpikeTaggerLDIdealAlgoV1::processEvent(const EBDigiCollection &ebD
     // setting the TP sample
     auto ebTPPeakSample = ebTPs[i][peakIdx_];
     auto encodedEt = ebTPPeakSample.encodedEt();
-    auto l1aSpike = ebTPPeakSample.l1aSpike() & (ld < spikeThreshold_);
+    auto l1aSpike = ebTPPeakSample.l1aSpike() | (ld < spikeThreshold_);
     auto time = ebTPPeakSample.time();
+    std::cout << "ebTPPeakSample encodedEt=" << encodedEt << ", l1aSpike=" << l1aSpike << ", time=" << time << std::endl;
     ebTPs[i].setSample(peakIdx_, EcalEBTriggerPrimitiveSample(encodedEt, l1aSpike, time));
   }
 }
