@@ -2,7 +2,6 @@
 #define SimCalorimetry_EcalEBTrigPrimAlgos_SpikeTaggerLDAlgoFactory_h
 
 #include <memory>
-#include <string>
 
 #include "SimCalorimetry/EcalEBTrigPrimAlgos/interface/EcalBcpPayloadParamsHelper.h"
 #include "SimCalorimetry/EcalEBTrigPrimAlgos/interface/SpikeTaggerLDAlgo.h"
