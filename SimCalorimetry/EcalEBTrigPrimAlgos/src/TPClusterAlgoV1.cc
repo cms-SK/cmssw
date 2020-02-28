@@ -43,7 +43,7 @@ void ecalPh2::TPClusterAlgoV1::processEvent(const EcalEBTrigPrimDigiCollection &
       continue;
     }
 
-    int nTPAdded = 0;
+    int nTPAdded = 1;
     int nSwissCrossAdded = 0;
     int sum = seedEt;
     int swissCrossSum = 0;

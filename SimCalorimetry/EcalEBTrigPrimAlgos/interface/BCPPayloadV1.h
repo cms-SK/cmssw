@@ -2,6 +2,7 @@
 #define SimCalorimetry_EcalEBTrigPrimAlgos_BCPPayloadV1_h
 
 #include "SimCalorimetry/EcalEBTrigPrimAlgos/interface/BCPPayload.h"
+#include "SimCalorimetry/EcalEBTrigPrimAlgos/interface/MultiFitTimingAlgo.h"
 #include "SimCalorimetry/EcalEBTrigPrimAlgos/interface/SpikeTaggerLDAlgo.h"
 #include "SimCalorimetry/EcalEBTrigPrimAlgos/interface/TPClusterAlgo.h"
 
@@ -17,6 +18,7 @@ class BCPPayloadV1 : public BCPPayload {
  protected:
   void createAlgos(const edm::EventSetup &eventSetup) override;
 
+  std::unique_ptr<MultiFitTimingAlgo> multiFitTimingAlgo_;
   std::unique_ptr<SpikeTaggerLDAlgo> spikeTaggerLDAlgo_;
   std::unique_ptr<TPClusterAlgo> tpClusterAlgo_;
 };
