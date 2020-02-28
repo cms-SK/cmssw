@@ -20,6 +20,7 @@
 // system include files
 #include <iostream>
 #include <memory>
+#include <vector>
 
 // user include files
 #include "FWCore/Framework/interface/Frameworkfwd.h"
@@ -61,6 +62,7 @@ class EcalBarrelTPProducer : public edm::stream::EDProducer<> {
 
   edm::EDGetTokenT<EBDigiCollection> ebDigiToken_;
   edm::EDPutTokenT<EcalEBTrigPrimDigiCollection> ebTPToken_;
+  edm::EDPutTokenT<std::vector<EcalEBTriggerPrimitiveCluster>> ebTPClusterToken_;
 
   std::shared_ptr<ecalPh2::EcalBcpPayloadParamsHelper> ecalBcpPayloadParamsHelper_;
   std::unique_ptr<ecalPh2::BCPPayload> payload_;
@@ -73,7 +75,8 @@ EcalBarrelTPProducer::EcalBarrelTPProducer(const edm::ParameterSet& iConfig) :
   config_(iConfig),
   fwVersion_(0),
   ebDigiToken_(consumes<EBDigiCollection>(iConfig.getParameter<edm::InputTag>("barrelEcalDigis"))),
-  ebTPToken_(produces<EcalEBTrigPrimDigiCollection>())
+  ebTPToken_(produces<EcalEBTrigPrimDigiCollection>()),
+  ebTPClusterToken_(produces<std::vector<EcalEBTriggerPrimitiveCluster>>())
 {
 }
 
@@ -95,20 +98,23 @@ EcalBarrelTPProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
   edm::Handle<EBDigiCollection> ebDigisHandle;
   iEvent.getByToken(ebDigiToken_, ebDigisHandle);
 
-  // prepare the output collection
+  // prepare the output collections
   // one TP per ebDigi id
   EcalEBTrigPrimDigiCollection ebTPs;
   ebTPs.reserve(ebDigisHandle->size());
   for (size_t i = 0; i < ebDigisHandle->size(); ++i) {
     ebTPs.emplace_back(EcalEBTriggerPrimitiveDigi((*ebDigisHandle)[i].id()));
   }
+  std::vector<EcalEBTriggerPrimitiveCluster> ebTPClusters;
 
   // process event in payload algorithms
-  payload_->processEvent(*ebDigisHandle, ebTPs);
+  payload_->processEvent(*ebDigisHandle, ebTPs, ebTPClusters);
 
   // set TP object and put it in the event
   auto tpOut = std::make_unique<EcalEBTrigPrimDigiCollection>(ebTPs);
+  auto tpClusterOut = std::make_unique<std::vector<EcalEBTriggerPrimitiveCluster>>(ebTPClusters);
   iEvent.put(ebTPToken_, std::move(tpOut));
+  iEvent.put(ebTPClusterToken_, std::move(tpClusterOut));
 }
 
 // ------------ method called once each stream before processing any runs, lumis or events  ------------

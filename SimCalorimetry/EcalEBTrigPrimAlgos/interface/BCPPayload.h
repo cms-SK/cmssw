@@ -3,6 +3,7 @@
 
 #include "FWCore/Framework/interface/EventSetup.h"
 #include "DataFormats/EcalDigi/interface/EcalDigiCollections.h"
+#include "DataFormats/EcalDigi/interface/EcalEBTriggerPrimitiveCluster.h"
 #include "SimCalorimetry/EcalEBTrigPrimAlgos/interface/EcalBcpPayloadParamsHelper.h"
 
 namespace ecalPh2 {
@@ -12,7 +13,7 @@ class BCPPayload {
   BCPPayload(const std::shared_ptr<ecalPh2::EcalBcpPayloadParamsHelper> ecalBcpPayloadParamsHelper, const edm::EventSetup &eventSetup) : ecalBcpPayloadParamsHelper_(ecalBcpPayloadParamsHelper) {};
   virtual ~BCPPayload() {};
 
-  virtual void processEvent(const EBDigiCollection &ebDigis, EcalEBTrigPrimDigiCollection &ebTPs) = 0;
+  virtual void processEvent(const EBDigiCollection &ebDigis, EcalEBTrigPrimDigiCollection &ebTPs, std::vector<EcalEBTriggerPrimitiveCluster> &ebTPClusters) = 0;
 
  protected:
   // object holding the configuration
