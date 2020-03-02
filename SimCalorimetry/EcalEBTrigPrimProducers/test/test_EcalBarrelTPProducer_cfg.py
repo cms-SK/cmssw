@@ -5,8 +5,8 @@ process = cms.Process("EBTPGTest")
 process.load('Configuration.StandardSequences.Services_cff')
 process.load("FWCore.MessageService.MessageLogger_cfi")
 process.load('Configuration.EventContent.EventContent_cff')
-process.load('Configuration.Geometry.GeometryExtended2023D35Reco_cff') # for MTD samples
-process.load('Configuration.Geometry.GeometryExtended2023D35_cff') # for MTD samples
+process.load('Configuration.Geometry.GeometryExtended2026D35Reco_cff') # for MTD samples
+process.load('Configuration.Geometry.GeometryExtended2026D35_cff') # for MTD samples
 #process.load('Configuration.Geometry.GeometryExtended2023D41Reco_cff') # for L1 TDR samples
 #process.load('Configuration.Geometry.GeometryExtended2023D41_cff') # for L1 TDR samples
 process.load('Configuration.StandardSequences.MagneticField_cff')
