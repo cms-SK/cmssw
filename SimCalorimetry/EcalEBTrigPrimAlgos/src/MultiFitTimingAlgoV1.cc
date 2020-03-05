@@ -26,7 +26,7 @@ void ecalPh2::MultiFitTimingAlgoV1::processEvent(const EBDigiCollection &ebDigis
   for (size_t i = 0; i < ebDigis.size(); ++i) {
     EBDataFrame ebDigi = ebDigis[i];
     auto ebDigiId = ebDigi.id();
-    std::cout << "digi " << i << ": rawId=" << ebDigiId.rawId() << ", nSamples=" << ebDigi.size() << ", ieta=" << ebDigiId.ieta() << ", iphi=" << ebDigiId.iphi() << std::endl;
+    //std::cout << "digi " << i << ": rawId=" << ebDigiId.rawId() << ", nSamples=" << ebDigi.size() << ", ieta=" << ebDigiId.ieta() << ", iphi=" << ebDigiId.iphi() << std::endl;
 
     // get the algo parameters for this crystal
     //TODO per crystal gains from ES
@@ -36,14 +36,14 @@ void ecalPh2::MultiFitTimingAlgoV1::processEvent(const EBDigiCollection &ebDigis
     const auto adcCounts = ebDigi[peakIdx_].adc();
     const auto gainId = ebDigi[peakIdx_].gainId();
     float linearlisedCounts = gains_[gainId] * adcCounts;
-    std::cout << "digi " << i << ", sample " << peakIdx_ << ": ADC counts=" << adcCounts << ", gain id=" << gainId << ", lin. counts=" << linearlisedCounts << std::endl;
+    //std::cout << "digi " << i << ", sample " << peakIdx_ << ": ADC counts=" << adcCounts << ", gain id=" << gainId << ", lin. counts=" << linearlisedCounts << std::endl;
 
     // setting the TP sample
     auto ebTPPeakSample = ebTPs[i][peakIdx_];
     auto encodedEt = linearlisedCounts;
     auto l1aSpike = ebTPPeakSample.l1aSpike();
     auto time = ebTPPeakSample.time();
-    std::cout << "ebTPPeakSample encodedEt=" << encodedEt << ", l1aSpike=" << l1aSpike << ", time=" << time << std::endl;
+    //std::cout << "ebTPPeakSample encodedEt=" << encodedEt << ", l1aSpike=" << l1aSpike << ", time=" << time << std::endl;
     ebTPs[i].setSample(peakIdx_, EcalEBTriggerPrimitiveSample(encodedEt, l1aSpike, time));
   }
 }

@@ -27,7 +27,7 @@ void ecalPh2::SpikeTaggerLDIdealAlgoV1::processEvent(const EBDigiCollection &ebD
   for (size_t i = 0; i < ebDigis.size(); ++i) {
     EBDataFrame ebDigi = ebDigis[i];
     auto ebDigiId = ebDigi.id();
-    std::cout << "digi " << i << ": rawId=" << ebDigiId.rawId() << ", nSamples=" << ebDigi.size() << ", ieta=" << ebDigiId.ieta() << ", iphi=" << ebDigiId.iphi() << std::endl;
+    //std::cout << "digi " << i << ": rawId=" << ebDigiId.rawId() << ", nSamples=" << ebDigi.size() << ", ieta=" << ebDigiId.ieta() << ", iphi=" << ebDigiId.iphi() << std::endl;
 
     // get the algo parameters for this crystal
     //TODO per crystal gains from ES
@@ -36,22 +36,22 @@ void ecalPh2::SpikeTaggerLDIdealAlgoV1::processEvent(const EBDigiCollection &ebD
     spikeThreshold_ = ecalBcpPayloadParamsHelper_->spikeTaggerLdThreshold(ebDigiId);
     weights_ = ecalBcpPayloadParamsHelper_->spikeTaggerLdWeights(ebDigiId);
 
-    // loop over samples
-    for (int j = 0; j < ebDigi.size(); ++j) {
-      const auto adcCounts = ebDigi[j].adc();
-      const auto gainId = ebDigi[j].gainId();
-      float linearlisedCounts = gains_[gainId] * adcCounts;
-      std::cout << "digi " << i << ", sample " << j << ": ADC counts=" << adcCounts << ", gain id=" << gainId << ", lin. counts=" << linearlisedCounts << std::endl;
-    }
+    //// loop over samples
+    //for (int j = 0; j < ebDigi.size(); ++j) {
+    //  const auto adcCounts = ebDigi[j].adc();
+    //  const auto gainId = ebDigi[j].gainId();
+    //  float linearlisedCounts = gains_[gainId] * adcCounts;
+    //  std::cout << "digi " << i << ", sample " << j << ": ADC counts=" << adcCounts << ", gain id=" << gainId << ", lin. counts=" << linearlisedCounts << std::endl;
+    //}
+    // calculate the LD variable
     const auto ld = calcLD(ebDigi);
-    std::cout << "LD=" << ld << ", spike=" << (ld < spikeThreshold_) << std::endl;
 
     // setting the TP sample
     auto ebTPPeakSample = ebTPs[i][peakIdx_];
     auto encodedEt = ebTPPeakSample.encodedEt();
     auto l1aSpike = ebTPPeakSample.l1aSpike() | (ld < spikeThreshold_);
     auto time = ebTPPeakSample.time();
-    std::cout << "ebTPPeakSample encodedEt=" << encodedEt << ", l1aSpike=" << l1aSpike << ", time=" << time << std::endl;
+    std::cout << "LD=" << ld << ", spike=" << (ld < spikeThreshold_) << ", ebTPPeakSample " << i << " encodedEt=" << encodedEt << ", l1aSpike=" << l1aSpike << ", time=" << time << std::endl;
     ebTPs[i].setSample(peakIdx_, EcalEBTriggerPrimitiveSample(encodedEt, l1aSpike, time));
   }
 }

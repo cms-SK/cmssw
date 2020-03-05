@@ -10,6 +10,8 @@
 ///
 
 #include <iomanip>
+#include <sstream>
+#include <string>
 
 #include "FWCore/MessageLogger/interface/MessageLogger.h"
 #include "CondFormats/DataRecord/interface/EcalBcpPayloadParamsRcd.h"
@@ -26,16 +28,21 @@ ecalPh2::MultiFitTimingAlgoFactory::ReturnType ecalPh2::MultiFitTimingAlgoFactor
   const auto algoType = std::string("dummy");
   const auto fwVersion = ecalBcpPayloadParamsHelper->fwVersion();
 
+  // FW string for messages
+  std::stringstream fwStrStream;
+  fwStrStream << "0x" << std::hex << std::setfill('0') << std::setw(8) << fwVersion << std::dec;
+  const auto fwStr = fwStrStream.str();
+
   // factory
   if (algoType == "dummy") {
     if (fwVersion >= 1) {
-      edm::LogInfo("ecalPh2::MultiFitTimingAlgoFactory") << "Creating multifit timing algo for FW version 0x" << std::hex << std::setfill('0') << std::setw(8) << fwVersion << std::dec;
+      edm::LogInfo("ecalPh2::MultiFitTimingAlgoFactory") << "Creating multifit timing algo for FW version " << fwStr;
       multiFitTimingAlgo = std::make_unique<ecalPh2::MultiFitTimingAlgoV1>(ecalBcpPayloadParamsHelper, eventSetup);
     } else {
-      edm::LogError("ecalPh2::MultiFitTimingAlgoFactory") << "Invalid FW version for multifit timing algo: 0x" << std::hex << std::setfill('0') << std::setw(8) << fwVersion << std::dec;
+      edm::LogError("ecalPh2::MultiFitTimingAlgoFactory") << "No multifit timing algo to create for FW version " << fwStr;
     }
   } else {
-    edm::LogError("ecalPh2::MultiFitTimingAlgoFactory") << "Invalid multifit timing algo type '" << algoType << "'";
+    edm::LogError("ecalPh2::MultiFitTimingAlgoFactory") << "Unknown multifit timing algo type '" << algoType << "'";
   }
 
   return multiFitTimingAlgo;

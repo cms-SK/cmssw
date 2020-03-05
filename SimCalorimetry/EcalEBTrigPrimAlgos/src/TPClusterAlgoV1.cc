@@ -34,7 +34,7 @@ void ecalPh2::TPClusterAlgoV1::processEvent(const EcalEBTrigPrimDigiCollection &
   for (size_t i = 0; i < ebTPs.size(); ++i) {
     const auto ebTP = ebTPs[i];
     auto ebTPId = ebTP.id();
-    std::cout << "TP for clustering " << i << ": rawId=" << ebTPId.rawId() << ", ieta=" << ebTPId.ieta() << ", iphi=" << ebTPId.iphi() << std::endl;
+    //std::cout << "TP for clustering " << i << ": rawId=" << ebTPId.rawId() << ", ieta=" << ebTPId.ieta() << ", iphi=" << ebTPId.iphi() << std::endl;
 
     // get the algo parameters for this crystal
     const auto peakIdx = ecalBcpPayloadParamsHelper_->sampleOfInterest(ebTPId);
@@ -93,7 +93,8 @@ void ecalPh2::TPClusterAlgoV1::processEvent(const EcalEBTrigPrimDigiCollection &
     }
 
     // swiss cross spike estimation 1 - E_4/E_seed > threshold
-    const bool spike = 1 - static_cast<float>(swissCrossSum) / static_cast<float>(seedEt) > swissCrossSpikeThreshold_;
+    const float swissCross = 1 - static_cast<float>(swissCrossSum) / static_cast<float>(seedEt);
+    const bool spike = swissCross > swissCrossSpikeThreshold_;
 
     // add a cluster object if the cluster passes the threshold or if the seed is a spike
     if (sum >= tpClusterThreshold_ or spike) {
@@ -101,7 +102,7 @@ void ecalPh2::TPClusterAlgoV1::processEvent(const EcalEBTrigPrimDigiCollection &
       const auto ieta = ebTPId.ieta();
       const auto iphi = ebTPId.iphi();
 
-      std::cout << "Adding TP cluster et=" << sum << ", ieta=" << ieta << ", iphi=" << iphi << ", spike=" << spike << std::endl;
+      std::cout << "Adding TP cluster et=" << sum << ", ieta=" << ieta << ", iphi=" << iphi << ", spike=" << spike << ", swiss cross=" << swissCross << std::endl;
       ebTPClusters.emplace_back(EcalEBTriggerPrimitiveCluster(sum, time, ieta, iphi, nTPAdded, spike));
     }
   }

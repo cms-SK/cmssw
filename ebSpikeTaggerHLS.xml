@@ -1,0 +1,13 @@
+
+<!-- USED TO ADD HLS LIBRARIES AND HEADER FILES TO CMSSW -->
+<!-- TO USE IT, DO: 'scram setup /path/to/hls.xml -->
+<!-- THEN ADD <use name="hls"/> to BuildFile.xml -->
+
+<tool name="EbSpikeTaggerHLS" version="0.1">
+   <lib name="EbSpikeTaggerHLS"/>
+   <client>
+       <environment name="HLS_BASE" default="/home/ppd/mfq48616/cms/ecal_phase2/bcp/hls/EbSpikeTagger/"/>
+       <environment name="LIBDIR" default="$HLS_BASE/"/>
+       <environment name="INCLUDE" default="$HLS_BASE/src/"/>
+   </client>
+</tool>

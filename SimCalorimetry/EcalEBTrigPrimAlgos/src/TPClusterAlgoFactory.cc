@@ -9,6 +9,7 @@
 ///
 
 #include <iomanip>
+#include <sstream>
 #include <string>
 
 #include "FWCore/MessageLogger/interface/MessageLogger.h"
@@ -26,16 +27,21 @@ ecalPh2::TPClusterAlgoFactory::ReturnType ecalPh2::TPClusterAlgoFactory::create(
   const auto algoType = std::string("crystalSumWithSwissCrossSpike");
   const auto fwVersion = ecalBcpPayloadParamsHelper->fwVersion();
 
+  // FW string for messages
+  std::stringstream fwStrStream;
+  fwStrStream << "0x" << std::hex << std::setfill('0') << std::setw(8) << fwVersion << std::dec;
+  const auto fwStr = fwStrStream.str();
+
   // factory
   if (algoType == "crystalSumWithSwissCrossSpike") {
     if (fwVersion >= 1) {
-      edm::LogInfo("ecalPh2::TPClusterAlgoFactory") << "Creating crystal sum TP clustering algo with swiss cross spike estimation for FW version 0x" << std::hex << std::setfill('0') << std::setw(8) << fwVersion << std::dec;
+      edm::LogInfo("ecalPh2::TPClusterAlgoFactory") << "Creating crystal sum TP clustering algo with swiss cross spike estimation for FW version " << fwStr;
       tpClusterAlgo = std::make_unique<ecalPh2::TPClusterAlgoV1>(ecalBcpPayloadParamsHelper);
     } else {
-      edm::LogError("ecalPh2::TPClusterAlgoFactory") << "Invalid FW version for crystal sum TP clustering algo with swiss cross spike estimation: 0x" << std::hex << std::setfill('0') << std::setw(8) << fwVersion << std::dec;
+      edm::LogError("ecalPh2::TPClusterAlgoFactory") << "No crystal sum TP clustering algo with swiss cross spike estimation to create for FW version " << fwStr;
     }
   } else {
-    edm::LogError("ecalPh2::TPClusterAlgoFactory") << "Invalid TP clustering LD algo type '" << algoType << "'";
+    edm::LogError("ecalPh2::TPClusterAlgoFactory") << "Unknown TP clustering LD algo type '" << algoType << "'";
   }
 
   return tpClusterAlgo;

@@ -67,16 +67,22 @@ process.ecalBcpPayloadParamsEsProducer = cms.ESProducer("EcalBcpPayloadParamsESP
 
     # configuration PSets for the individual payload algorithms
     algoConfigs = cms.VPSet(
+        #cms.PSet(
+        #    algo = cms.string("spikeTaggerLd"),
+        #    type = cms.string("ideal"), # ideal, hls
+        #    perCrystalParams = cms.VPSet(
+        #        cms.PSet(
+        #            ietaRange = cms.string(":"), # Example range formats "ietaMin:ietaMax", e.g. "-85:42" (user defined), "1:" (positive side), ":" (whole EB eta range)
+        #            iphiRange = cms.string(":"), # Example range formats "ietaMin:ietaMax", e.g. "90:270" (user defined), ":180" (MIN_IPHI:180), ":" (MIN_IPHI:MAX_IPHI)
+        #            spikeThreshold = cms.double(-0.1),
+        #            weights = cms.vdouble(1.5173, -2.1034, 1.8117, -0.6451)
+        #        )
+        #    )
+        #),
         cms.PSet(
             algo = cms.string("spikeTaggerLd"),
-            type = cms.string("ideal"), # ideal, hls
+            type = cms.string("hls"), # ideal, hls
             perCrystalParams = cms.VPSet(
-                cms.PSet(
-                    ietaRange = cms.string(":"), # Example range formats "ietaMin:ietaMax", e.g. "-85:42" (user defined), "1:" (positive side), ":" (whole EB eta range)
-                    iphiRange = cms.string(":"), # Example range formats "ietaMin:ietaMax", e.g. "90:270" (user defined), ":180" (MIN_IPHI:180), ":" (MIN_IPHI:MAX_IPHI)
-                    spikeThreshold = cms.double(-0.1),
-                    weights = cms.vdouble(1.5173, -2.1034, 1.8117, -0.6451)
-                )
             )
         ),
     )
