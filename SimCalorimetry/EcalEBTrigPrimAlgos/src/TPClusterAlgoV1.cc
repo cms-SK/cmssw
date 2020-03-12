@@ -30,8 +30,8 @@ void ecalPh2::TPClusterAlgoV1::processEvent(const EcalEBTrigPrimDigiCollection &
   std::cout << "Processing TPClusterAlgoV1" << std::endl;
   std::cout << "This frame has size: " << ebTPs.size() << std::endl;
 
-  bool goodSeed = true;
   for (size_t i = 0; i < ebTPs.size(); ++i) {
+    bool goodSeed = true; // start with the assumption that this is a good seed
     const auto ebTP = ebTPs[i];
     auto ebTPId = ebTP.id();
     //std::cout << "TP for clustering " << i << ": rawId=" << ebTPId.rawId() << ", ieta=" << ebTPId.ieta() << ", iphi=" << ebTPId.iphi() << std::endl;
@@ -60,6 +60,7 @@ void ecalPh2::TPClusterAlgoV1::processEvent(const EcalEBTrigPrimDigiCollection &
 
       // calculate cluster ET sum
       if (distEta <= iEtaDiffMax_ and distPhi <= iPhiDiffMax_) {
+        //std::cout << "seed et: " << seedEt << ", seed ieta: " << ebTPId.ieta() << ", seed iphi: " << ebTPId.iphi() << ", et: " << encodedEt << ", distEta: " << distEta << ", distPhi: " << distPhi << ", spike: " << ebTPs[j][peakIdx].l1aSpike() << ", goodSeed: " << goodSeed << std::endl;
         if (goodSeed and ebTPs[j][peakIdx].l1aSpike() == 0) {
           // If a crystal with a higher ET than the seed crystal is found in the
           // cluster area no cluster is made around the seed crystal.
@@ -77,7 +78,7 @@ void ecalPh2::TPClusterAlgoV1::processEvent(const EcalEBTrigPrimDigiCollection &
       }
 
       // calculate swiss cross sum
-      if (std::abs(distEta) == 1 and std::abs(distPhi) == 1) {
+      if (std::abs(distEta) + std::abs(distPhi) == 1) {
         if (ebTPs[j][peakIdx].l1aSpike() == 0) {
           swissCrossSum += encodedEt;
         }
