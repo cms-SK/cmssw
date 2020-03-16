@@ -33,7 +33,8 @@ void ecalPh2::MultiFitTimingAlgoV1::processEvent(const EBDigiCollection &ebDigis
     gains_ = { {12., 1., 2., 12.} }; // TIA gains (Currently old gain values. Phase 2 will have only two gains.)
     peakIdx_ = ecalBcpPayloadParamsHelper_->sampleOfInterest(ebDigiId);
 
-    const auto adcCounts = ebDigi[peakIdx_].adc();
+    // dummy ET calculation
+    const auto adcCounts = ebDigi[peakIdx_].adc() >> 2; // Go from 12 bit ADC counts to 10 bit ET
     const auto gainId = ebDigi[peakIdx_].gainId();
     float linearlisedCounts = gains_[gainId] * adcCounts;
     //std::cout << "digi " << i << ", sample " << peakIdx_ << ": ADC counts=" << adcCounts << ", gain id=" << gainId << ", lin. counts=" << linearlisedCounts << std::endl;

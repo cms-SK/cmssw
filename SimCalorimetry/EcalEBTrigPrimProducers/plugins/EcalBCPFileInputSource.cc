@@ -177,7 +177,7 @@ EcalBCPFileInputSource::setRunAndEventInfo(edm::EventID& id, edm::TimeValue_t& t
       strstream >> labelstr >> framenumberstr >> colonstr;
       for (unsigned int i = 0; i < nchannels_; ++i) {
         strstream >> adc >> first_sample;
-        EcalMGPASample sample(adc, 1);
+        EcalMGPASample sample(adc, 1); // EcalMGPASample applies a mask of 0xFFF on adc count (max. adc: 4095)
         static_cast<EcalDataFrame>(ebDigis[i]).setSample(s - startSample_, sample);
       }
     }

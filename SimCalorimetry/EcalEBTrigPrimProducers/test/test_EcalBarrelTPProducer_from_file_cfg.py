@@ -15,7 +15,7 @@ process.maxEvents = cms.untracked.PSet(
 )
 
 process.source = cms.Source("EcalBCPFileInputSource",
-    fileNames = cms.untracked.vstring('file:../../../hls/testbench_data/rx_tbspikes0p9_ld2_50evts.txt'),
+    fileNames = cms.untracked.vstring('file:../../../hls/testbench_data/rx_tbspikes0p9_ld2_1000evts.txt'),
     firstLuminosityBlockForEachRun = cms.untracked.VLuminosityBlockID([]),
     runNumber = cms.untracked.uint32(1),
     firstEventNumber = cms.untracked.uint32(1),
@@ -83,7 +83,44 @@ process.simEcalBarrelTPDigis = cms.EDProducer("EcalBarrelTPProducer",
     )
 )
 
-process.p = cms.Path(process.simEcalBarrelTPDigis)
+process.simEcalBarrelTPDigisIdealSpikeTagger = cms.EDProducer("EcalBarrelTPProducer",
+#    barrelEcalDigis = cms.InputTag("simEcalUnsuppressedDigis","","HLT"),
+#    barrelEcalDigis = cms.InputTag("simEcalUnsuppressedDigis","ebDigis"),
+#    barrelEcalDigis = cms.InputTag("selectDigi","selectedEcalEBDigiCollection"),
+    barrelEcalDigis = cms.InputTag("source"),
+
+    configSource = cms.string("fromModuleConfig"), # use "fromES" for parameters from ES Producer
+                                         # use "fromModuleConfig" for parameters below from this module configuration
+    # configuration below is only active when configSource is set to "fromModuleConfig"
+    fwVersion = cms.uint32(1),
+
+    # samples of interest configurable for each crystal
+    samplesOfInterest = cms.VPSet(
+        cms.PSet(
+            ietaRange = cms.string(":"), # Example range formats "ietaMin:ietaMax", e.g. "-85:42" (user defined), "1:" (positive side), ":" (whole EB eta range)
+            iphiRange = cms.string(":"), # Example range formats "ietaMin:ietaMax", e.g. "90:270" (user defined), ":180" (MIN_IPHI:180), ":" (MIN_IPHI:MAX_IPHI)
+            sampleOfInterest = cms.uint32(6)
+        )
+    ),
+
+    # configuration PSets for the individual payload algorithms
+    algoConfigs = cms.VPSet(
+        cms.PSet(
+            algo = cms.string("spikeTaggerLd"),
+            type = cms.string("ideal"), # ideal, hls
+            perCrystalParams = cms.VPSet(
+                cms.PSet(
+                    ietaRange = cms.string(":"), # Example range formats "ietaMin:ietaMax", e.g. "-85:42" (user defined), "1:" (positive side), ":" (whole EB eta range)
+                    iphiRange = cms.string(":"), # Example range formats "ietaMin:ietaMax", e.g. "90:270" (user defined), ":180" (MIN_IPHI:180), ":" (MIN_IPHI:MAX_IPHI)
+                    spikeThreshold = cms.double(-0.1),
+                    weights = cms.vdouble(1.5173, -2.1034, 1.8117, -0.6451)
+                )
+            )
+        ),
+    )
+)
+
+process.p = cms.Path(process.simEcalBarrelTPDigis+process.simEcalBarrelTPDigisIdealSpikeTagger )
 
 process.Out = cms.OutputModule( "PoolOutputModule",
     fileName = cms.untracked.string( "EBTP_PhaseII_filetest_uncompEt_spikeflag.root" ),
