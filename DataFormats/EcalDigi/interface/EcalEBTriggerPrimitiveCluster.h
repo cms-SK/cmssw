@@ -24,6 +24,9 @@ class EcalEBTriggerPrimitiveCluster {
   void setSpike(const bool spike) { spike_ = spike; }
   bool spike() const { return spike_; }
 
+  bool operator==(const EcalEBTriggerPrimitiveCluster& rhs) const;
+  inline bool operator!=(const EcalEBTriggerPrimitiveCluster& rhs) const { return !(operator==(rhs)); };
+
  private:
   // CMS-TDR-015, Table 3.5
   int hwEt_;
