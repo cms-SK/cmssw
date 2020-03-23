@@ -28,6 +28,8 @@ process.ecalBcpPayloadParamsSource = cms.ESSource("EmptyESSource",
     firstValid = cms.vuint32(1)
 )
 
+sampleOfInterest = 6
+
 process.ecalBcpPayloadParamsEsProducer = cms.ESProducer("EcalBcpPayloadParamsESProducer",
     fwVersion = cms.uint32(1),
 
@@ -36,7 +38,7 @@ process.ecalBcpPayloadParamsEsProducer = cms.ESProducer("EcalBcpPayloadParamsESP
         cms.PSet(
             ietaRange = cms.string(":"), # Example range formats "ietaMin:ietaMax", e.g. "-85:42" (user defined), "1:" (positive side), ":" (whole EB eta range)
             iphiRange = cms.string(":"), # Example range formats "ietaMin:ietaMax", e.g. "90:270" (user defined), ":180" (MIN_IPHI:180), ":" (MIN_IPHI:MAX_IPHI)
-            sampleOfInterest = cms.uint32(6)
+            sampleOfInterest = cms.uint32(sampleOfInterest)
         )
     ),
 
@@ -99,7 +101,7 @@ process.simEcalBarrelTPDigisIdealSpikeTagger = cms.EDProducer("EcalBarrelTPProdu
         cms.PSet(
             ietaRange = cms.string(":"), # Example range formats "ietaMin:ietaMax", e.g. "-85:42" (user defined), "1:" (positive side), ":" (whole EB eta range)
             iphiRange = cms.string(":"), # Example range formats "ietaMin:ietaMax", e.g. "90:270" (user defined), ":180" (MIN_IPHI:180), ":" (MIN_IPHI:MAX_IPHI)
-            sampleOfInterest = cms.uint32(6)
+            sampleOfInterest = cms.uint32(sampleOfInterest)
         )
     ),
 
@@ -120,7 +122,20 @@ process.simEcalBarrelTPDigisIdealSpikeTagger = cms.EDProducer("EcalBarrelTPProdu
     )
 )
 
-process.p = cms.Path(process.simEcalBarrelTPDigis+process.simEcalBarrelTPDigisIdealSpikeTagger )
+process.TFileService = cms.Service("TFileService",
+   fileName = cms.string("histos.root"),
+   closeFileFast = cms.untracked.bool(True)
+)
+
+process.ecalBarrelTPAnalyzer = cms.EDAnalyzer("EcalBarrelTPAnalyzer",
+   barrelTPColl1 = cms.InputTag("simEcalBarrelTPDigisIdealSpikeTagger"),
+   barrelTPColl2 = cms.InputTag("simEcalBarrelTPDigis"),
+   barrelTPClusterColl1 = cms.InputTag("simEcalBarrelTPDigisIdealSpikeTagger"),
+   barrelTPClusterColl2 = cms.InputTag("simEcalBarrelTPDigis"),
+   sampleOfInterest = cms.uint32(sampleOfInterest)
+)
+
+process.p = cms.Path(process.simEcalBarrelTPDigis+process.simEcalBarrelTPDigisIdealSpikeTagger+process.ecalBarrelTPAnalyzer)
 
 process.Out = cms.OutputModule( "PoolOutputModule",
     fileName = cms.untracked.string( "EBTP_PhaseII_filetest_uncompEt_spikeflag.root" ),
