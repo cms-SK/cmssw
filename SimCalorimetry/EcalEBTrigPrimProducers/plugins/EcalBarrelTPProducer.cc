@@ -60,6 +60,7 @@ class EcalBarrelTPProducer : public edm::stream::EDProducer<> {
 
   unsigned int fwVersion_;
 
+  edm::ESGetToken<EcalBcpPayloadParams, EcalBcpPayloadParamsRcd> esEbPayloadParamsToken_;
   edm::EDGetTokenT<EBDigiCollection> ebDigiToken_;
   edm::EDPutTokenT<EcalEBTrigPrimDigiCollection> ebTPToken_;
   edm::EDPutTokenT<EcalEBTriggerPrimitiveClusterCollection> ebTPClusterToken_;
@@ -74,6 +75,7 @@ class EcalBarrelTPProducer : public edm::stream::EDProducer<> {
 EcalBarrelTPProducer::EcalBarrelTPProducer(const edm::ParameterSet& iConfig) :
   config_(iConfig),
   fwVersion_(0),
+  esEbPayloadParamsToken_(esConsumes<EcalBcpPayloadParams, EcalBcpPayloadParamsRcd, edm::Transition::BeginRun>()),
   ebDigiToken_(consumes<EBDigiCollection>(iConfig.getParameter<edm::InputTag>("barrelEcalDigis"))),
   ebTPToken_(produces<EcalEBTrigPrimDigiCollection>()),
   ebTPClusterToken_(produces<EcalEBTriggerPrimitiveClusterCollection>())
@@ -135,11 +137,8 @@ EcalBarrelTPProducer::beginRun(edm::Run const&, edm::EventSetup const &eventSetu
   // get the configuration
   const auto configSource = config_.getParameter<std::string>("configSource");
   if (configSource == "fromES") {
-    const auto &paramsRcd = eventSetup.get<EcalBcpPayloadParamsRcd>();
-    edm::ESHandle<EcalBcpPayloadParams> paramsHandle;
-    paramsRcd.get(paramsHandle);
-
-    ecalBcpPayloadParamsHelper_ = std::make_shared<ecalPh2::EcalBcpPayloadParamsHelper>(*paramsHandle.product());
+    const auto &esParams = eventSetup.getData(esEbPayloadParamsToken_);
+    ecalBcpPayloadParamsHelper_ = std::make_shared<ecalPh2::EcalBcpPayloadParamsHelper>(esParams);
   } else if (configSource == "fromModuleConfig") {
     ecalBcpPayloadParamsHelper_ = std::make_shared<ecalPh2::EcalBcpPayloadParamsHelper>(config_);
   } else {
