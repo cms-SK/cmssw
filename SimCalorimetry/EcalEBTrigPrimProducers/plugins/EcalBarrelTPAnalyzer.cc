@@ -116,6 +116,11 @@ class EcalBarrelTPAnalyzer : public edm::one::EDAnalyzer<> {
   edm::EDGetTokenT<EcalEBTrigPrimDigiCollection> ebTPToken2_;
   edm::EDGetTokenT<EcalEBTriggerPrimitiveClusterCollection> ebTPClusterToken1_;
   edm::EDGetTokenT<EcalEBTriggerPrimitiveClusterCollection> ebTPClusterToken2_;
+
+  std::string tpCollName1_;
+  std::string tpCollName2_;
+  std::string tpClusterCollName1_;
+  std::string tpClusterCollName2_;
 };
 
 EcalBarrelTPAnalyzer::EcalBarrelTPAnalyzer(const edm::ParameterSet& iConfig) :
@@ -126,8 +131,11 @@ EcalBarrelTPAnalyzer::EcalBarrelTPAnalyzer(const edm::ParameterSet& iConfig) :
   ebTPToken1_(consumes<EcalEBTrigPrimDigiCollection>(iConfig.getParameter<edm::InputTag>("barrelTPColl1"))),
   ebTPToken2_(consumes<EcalEBTrigPrimDigiCollection>(iConfig.getParameter<edm::InputTag>("barrelTPColl2"))),
   ebTPClusterToken1_(consumes<EcalEBTriggerPrimitiveClusterCollection>(iConfig.getParameter<edm::InputTag>("barrelTPClusterColl1"))),
-  ebTPClusterToken2_(consumes<EcalEBTriggerPrimitiveClusterCollection>(iConfig.getParameter<edm::InputTag>("barrelTPClusterColl2")))
-
+  ebTPClusterToken2_(consumes<EcalEBTriggerPrimitiveClusterCollection>(iConfig.getParameter<edm::InputTag>("barrelTPClusterColl2"))),
+  tpCollName1_(iConfig.getUntrackedParameter<std::string>("tpCollName1", "collection 1")),
+  tpCollName2_(iConfig.getUntrackedParameter<std::string>("tpCollName2", "collection 2")),
+  tpClusterCollName1_(iConfig.getUntrackedParameter<std::string>("tpClusterCollName1", "collection 1")),
+  tpClusterCollName2_(iConfig.getUntrackedParameter<std::string>("tpClusterCollName2", "collection 2"))
 {
   tree_ = fs_->make<TTree>("ecalBarrelTPTree", "ecalBarrelTPTree");
 
@@ -137,12 +145,12 @@ EcalBarrelTPAnalyzer::EcalBarrelTPAnalyzer(const edm::ParameterSet& iConfig) :
   tree_->Branch("tpL1aSpike1", &tpL1aSpike1_);
   tree_->Branch("tpTime1", &tpTime1_);
 
-  hNumTPs1_ = fs_->make<TH1I>("numTPs1", "number of TPs in collection 1;# TP;", 100, 0, 100);
-  hTPEncodedEt1_ = fs_->make<TH1I>("tpEncodedEt1", "encoded E_{T} of sample of interest in collection 1;encoded E_{T};", 1024, 0, 1024);
-  hTPL1aSpike1_ = fs_->make<TH1I>("tpL1aSpike1", "spike flag of sample of interest in collection 1;spike;", 2, 0, 2);
-  hTPTime1_ = fs_->make<TH1I>("tpTime1", "time of sample of interest in collection 1;time;", 32, 0, 32);
-  h2TPEncodedEtVsCh1_ = fs_->make<TH2I>("tpEncodedEtVsCh1", "encoded E_{T} vs. TP index of sample of interest in collection 1;encoded E_{T};TP index", 1024, 0, 1024, 20, 0, 20);
-  h2TPEncodedEtVsSpike1_ = fs_->make<TH2I>("tpEncodedEtVsSpike1", "encoded E_{T} vs. spike flag of sample of interest in collection 1;encoded E_{T};spike", 1024, 0, 1024, 2, 0, 2);
+  hNumTPs1_ = fs_->make<TH1I>("numTPs1", ("number of TPs in " + tpCollName1_ + ";# TP;").c_str(), 100, 0, 100);
+  hTPEncodedEt1_ = fs_->make<TH1I>("tpEncodedEt1", ("encoded E_{T} of sample of interest in " + tpCollName1_ + ";encoded E_{T};").c_str(), 1024, 0, 1024);
+  hTPL1aSpike1_ = fs_->make<TH1I>("tpL1aSpike1", ("spike flag of sample of interest in " + tpCollName1_ + ";spike;").c_str(), 2, 0, 2);
+  hTPTime1_ = fs_->make<TH1I>("tpTime1", ("time of sample of interest in " + tpCollName1_ + ";time;").c_str(), 32, 0, 32);
+  h2TPEncodedEtVsCh1_ = fs_->make<TH2I>("tpEncodedEtVsCh1", ("encoded E_{T} vs. TP index of sample of interest in " + tpCollName1_ + ";encoded E_{T};TP index").c_str(), 1024, 0, 1024, 20, 0, 20);
+  h2TPEncodedEtVsSpike1_ = fs_->make<TH2I>("tpEncodedEtVsSpike1", ("encoded E_{T} vs. spike flag of sample of interest in " + tpCollName1_ + ";encoded E_{T};spike").c_str(), 1024, 0, 1024, 2, 0, 2);
 
   // TPs of collection 2 if available
   if (iConfig.getParameter<edm::InputTag>("barrelTPColl2").label() != "") {
@@ -153,16 +161,16 @@ EcalBarrelTPAnalyzer::EcalBarrelTPAnalyzer(const edm::ParameterSet& iConfig) :
     tree_->Branch("tpL1aSpike2", &tpL1aSpike2_);
     tree_->Branch("tpTime2", &tpTime2_);
 
-    hNumTPs2_ = fs_->make<TH1I>("numTPs2", "number of TPs in collection 2;# TP;", 100, 0, 100);
-    hTPEncodedEt2_ = fs_->make<TH1I>("tpEncodedEt2", "encoded E_{T} of sample of interest in collection 2;encoded E_{T};", 1024, 0, 1024);
-    hTPL1aSpike2_ = fs_->make<TH1I>("tpL1aSpike2", "spike flag of sample of interest in collection 2;spike;", 2, 0, 2);
-    hTPTime2_ = fs_->make<TH1I>("tpTime2", "time of sample of interest in collection 2;time;", 32, 0, 32);
-    h2TPEncodedEtVsCh2_ = fs_->make<TH2I>("tpEncodedEtVsCh2", "encoded E_{T} vs. TP index of sample of interest in collection 2;encoded E_{T};TP index", 1024, 0, 1024, 20, 0, 20);
-    h2TPEncodedEtVsSpike2_ = fs_->make<TH2I>("tpEncodedEtVsSpike2", "encoded E_{T} vs. spike flag of sample of interest in collection 2;encoded E_{T};spike", 1024, 0, 1024, 2, 0, 2);
+    hNumTPs2_ = fs_->make<TH1I>("numTPs2", ("number of TPs in " + tpCollName2_ + ";# TP;").c_str(), 100, 0, 100);
+    hTPEncodedEt2_ = fs_->make<TH1I>("tpEncodedEt2", ("encoded E_{T} of sample of interest in " + tpCollName2_ + ";encoded E_{T};").c_str(), 1024, 0, 1024);
+    hTPL1aSpike2_ = fs_->make<TH1I>("tpL1aSpike2", ("spike flag of sample of interest in " + tpCollName2_ + ";spike;").c_str(), 2, 0, 2);
+    hTPTime2_ = fs_->make<TH1I>("tpTime2", ("time of sample of interest in " + tpCollName2_ + ";time;").c_str(), 32, 0, 32);
+    h2TPEncodedEtVsCh2_ = fs_->make<TH2I>("tpEncodedEtVsCh2", ("encoded E_{T} vs. TP index of sample of interest in " + tpCollName2_ + ";encoded E_{T};TP index").c_str(), 1024, 0, 1024, 20, 0, 20);
+    h2TPEncodedEtVsSpike2_ = fs_->make<TH2I>("tpEncodedEtVsSpike2", ("encoded E_{T} vs. spike flag of sample of interest in " + tpCollName2_ + ";encoded E_{T};spike").c_str(), 1024, 0, 1024, 2, 0, 2);
 
-    h2TPEncodedEt1Vs2_ = fs_->make<TH2I>("tpEncodedEt1Vs2", "encoded E_{T} flag of sample of interest in collection 1 vs. collection 2;collection 1 encoded E_{T};collection 2 encoded E_{T}", 1024, 0, 1024, 1024, 0, 1024);
-    h2TPL1aSpike1Vs2_ = fs_->make<TH2I>("tpL1aSpike1Vs2", "spike flag of sample of interest in collection 1 vs. collection 2;collection 1 spike;collection 2 spike", 2, 0, 2, 2, 0, 2);
-    h2TPTime1Vs2_ = fs_->make<TH2I>("tpTime1Vs2", "time of sample of interest in collection 1 vs. collection 2;collection 1 time;collection 2 time", 32, 0, 32, 32, 0, 32);
+    h2TPEncodedEt1Vs2_ = fs_->make<TH2I>("tpEncodedEt1Vs2", ("encoded E_{T} flag of sample of interest in " + tpCollName1_ + " vs. " + tpCollName2_ + ";" + tpCollName1_ + " encoded E_{T};" + tpCollName2_ + " encoded E_{T}").c_str(), 1024, 0, 1024, 1024, 0, 1024);
+    h2TPL1aSpike1Vs2_ = fs_->make<TH2I>("tpL1aSpike1Vs2", ("spike flag of sample of interest in " + tpCollName1_ + " vs. " + tpCollName2_ + ";" + tpCollName1_ + " spike;" + tpCollName2_ + " spike").c_str(), 2, 0, 2, 2, 0, 2);
+    h2TPTime1Vs2_ = fs_->make<TH2I>("tpTime1Vs2", ("time of sample of interest in " + tpCollName1_ + " vs. " + tpCollName2_ + ";" + tpCollName1_ + " time;" + tpCollName2_ + " time").c_str(), 32, 0, 32, 32, 0, 32);
   }
 
   // TP clusters of collection 1
@@ -174,13 +182,13 @@ EcalBarrelTPAnalyzer::EcalBarrelTPAnalyzer(const edm::ParameterSet& iConfig) :
   tree_->Branch("tpClusterNumOfCrystals1", &tpClusterNumOfCrystals1_);
   tree_->Branch("tpClusterSpike1", &tpClusterSpike1_);
 
-  hNumTPClusters1_ = fs_->make<TH1I>("numTPClusters1", "number of TP clusters, collection 1;# TP clusters;", 20, 0, 20);
-  hTPClusterHwEt1_ = fs_->make<TH1I>("tpClusterHwEt1", "HW E_{T}, collection 1;HW E_{T};", 1025, -1, 1024); // HW ET -1 is for crystals that are not the seed of a cluster but are a spike
-  hTPClusterHwTime1_ = fs_->make<TH1I>("tpClusterHwTime1", "HW time, collection 1;HW time;", 32, 0, 32);
-  hTPClusterHwEta1_ = fs_->make<TH1I>("tpClusterHwEta1", "i#eta, collection 1;i#eta;", 256, 0, 256);
-  hTPClusterHwPhi1_ = fs_->make<TH1I>("tpClusterHwPhi1", "i#phi, collection 1;i#phi;", 256, 0, 256);
-  hTPClusterNumOfCrystals1_ = fs_->make<TH1I>("tpClusterNumOfCrystals1", "number of crystals per cluster, collection 1;# crystals;", 256, 0, 256);
-  hTPClusterSpike1_ = fs_->make<TH1I>("tpClusterSpike1", "swiss cross spike, collection 1;swiss cross spike;", 2, 0, 2);
+  hNumTPClusters1_ = fs_->make<TH1I>("numTPClusters1", ("number of TP clusters, " + tpClusterCollName1_ + ";# TP clusters;").c_str(), 20, 0, 20);
+  hTPClusterHwEt1_ = fs_->make<TH1I>("tpClusterHwEt1", ("HW E_{T}, " + tpClusterCollName1_ + ";HW E_{T};").c_str(), 1025, -1, 1024); // HW ET -1 is for crystals that are not the seed of a cluster but are a spike
+  hTPClusterHwTime1_ = fs_->make<TH1I>("tpClusterHwTime1", ("HW time, " + tpClusterCollName1_ + ";HW time;").c_str(), 32, 0, 32);
+  hTPClusterHwEta1_ = fs_->make<TH1I>("tpClusterHwEta1", ("i#eta, " + tpClusterCollName1_ + ";i#eta;").c_str(), 256, 0, 256);
+  hTPClusterHwPhi1_ = fs_->make<TH1I>("tpClusterHwPhi1", ("i#phi," + tpClusterCollName1_ + ";i#phi;").c_str(), 256, 0, 256);
+  hTPClusterNumOfCrystals1_ = fs_->make<TH1I>("tpClusterNumOfCrystals1", ("number of crystals per cluster, " + tpClusterCollName1_ + ";# crystals;").c_str(), 256, 0, 256);
+  hTPClusterSpike1_ = fs_->make<TH1I>("tpClusterSpike1", ("swiss cross spike, " + tpClusterCollName1_ + ";swiss cross spike;").c_str(), 2, 0, 2);
 
   // TP clusters of collection 2 if available
   if (iConfig.getParameter<edm::InputTag>("barrelTPClusterColl2").label() != "") {
@@ -194,13 +202,13 @@ EcalBarrelTPAnalyzer::EcalBarrelTPAnalyzer(const edm::ParameterSet& iConfig) :
     tree_->Branch("tpClusterNumOfCrystals2", &tpClusterNumOfCrystals2_);
     tree_->Branch("tpClusterSpike2", &tpClusterSpike2_);
 
-    hNumTPClusters2_ = fs_->make<TH1I>("numTPClusters2", "number of TP clusters in collection 2;# TP clusters;", 20, 0, 20);
-    hTPClusterHwEt2_ = fs_->make<TH1I>("tpClusterHwEt2", "HW E_{T}, collection 2;HW E_{T};", 1025, -1, 1024); // HW ET -1 is for crystals that are not the seed of a cluster but are a spike
-    hTPClusterHwTime2_ = fs_->make<TH1I>("tpClusterHwTime2", "HW time, collection 2;HW time;", 32, 0, 32);
-    hTPClusterHwEta2_ = fs_->make<TH1I>("tpClusterHwEta2", "i#eta, collection 2;i#eta;", 256, 0, 256);
-    hTPClusterHwPhi2_ = fs_->make<TH1I>("tpClusterHwPhi2", "i#phi, collection 2;i#phi;", 256, 0, 256);
-    hTPClusterNumOfCrystals2_ = fs_->make<TH1I>("tpClusterNumOfCrystals2", "number of crystals per cluster, collection 2;# crystals;", 256, 0, 256);
-    hTPClusterSpike2_ = fs_->make<TH1I>("tpClusterSpike2", "swiss cross spike, collection 2;swiss cross spike;", 2, 0, 2);
+    hNumTPClusters2_ = fs_->make<TH1I>("numTPClusters2", ("number of TP clusters in " + tpClusterCollName2_ + ";# TP clusters;").c_str(), 20, 0, 20);
+    hTPClusterHwEt2_ = fs_->make<TH1I>("tpClusterHwEt2", ("HW E_{T}, " + tpClusterCollName2_ + ";HW E_{T};").c_str(), 1025, -1, 1024); // HW ET -1 is for crystals that are not the seed of a cluster but are a spike
+    hTPClusterHwTime2_ = fs_->make<TH1I>("tpClusterHwTime2", ("HW time, " + tpClusterCollName2_ + ";HW time;").c_str(), 32, 0, 32);
+    hTPClusterHwEta2_ = fs_->make<TH1I>("tpClusterHwEta2", ("i#eta, " + tpClusterCollName2_ + ";i#eta;").c_str(), 256, 0, 256);
+    hTPClusterHwPhi2_ = fs_->make<TH1I>("tpClusterHwPhi2", ("i#phi, " + tpClusterCollName2_ + ";i#phi;").c_str(), 256, 0, 256);
+    hTPClusterNumOfCrystals2_ = fs_->make<TH1I>("tpClusterNumOfCrystals2", ("number of crystals per cluster, " + tpClusterCollName2_ + ";# crystals;").c_str(), 256, 0, 256);
+    hTPClusterSpike2_ = fs_->make<TH1I>("tpClusterSpike2", ("swiss cross spike, " + tpClusterCollName2_ + ";swiss cross spike;").c_str(), 2, 0, 2);
   }
 }
 

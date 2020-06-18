@@ -115,7 +115,9 @@ process.simEcalBarrelTPDigisIdealSpikeTagger = cms.EDProducer("EcalBarrelTPProdu
                     ietaRange = cms.string(":"), # Example range formats "ietaMin:ietaMax", e.g. "-85:42" (user defined), "1:" (positive side), ":" (whole EB eta range)
                     iphiRange = cms.string(":"), # Example range formats "ietaMin:ietaMax", e.g. "90:270" (user defined), ":180" (MIN_IPHI:180), ":" (MIN_IPHI:MAX_IPHI)
                     spikeThreshold = cms.double(-0.1),
-                    weights = cms.vdouble(1.5173, -2.1034, 1.8117, -0.6451)
+                    #weights = cms.vdouble(1.36, -1.30, -0.54) # weights used in LD2 HLS algo
+                    weights = cms.vdouble(1.5173, -2.1034, 1.8117, -0.6451) # ideal weights LD3
+                    #weights = cms.vdouble(1.52, -2.10, 1.81, -0.65) # weights used in LD3 HLS algo
                 )
             )
         ),
@@ -132,7 +134,11 @@ process.ecalBarrelTPAnalyzer = cms.EDAnalyzer("EcalBarrelTPAnalyzer",
    barrelTPColl2 = cms.InputTag("simEcalBarrelTPDigis"),
    barrelTPClusterColl1 = cms.InputTag("simEcalBarrelTPDigisIdealSpikeTagger"),
    barrelTPClusterColl2 = cms.InputTag("simEcalBarrelTPDigis"),
-   sampleOfInterest = cms.uint32(sampleOfInterest)
+   sampleOfInterest = cms.uint32(sampleOfInterest),
+   tpCollName1 = cms.untracked.string("Ideal LD3 collection"),
+   tpCollName2 = cms.untracked.string("HLS LD3 collection"),
+   tpClusterCollName1 = cms.untracked.string("Ideal LD3 collection"),
+   tpClusterCollName2 = cms.untracked.string("HLS LD3 collection")
 )
 
 process.p = cms.Path(process.simEcalBarrelTPDigis+process.simEcalBarrelTPDigisIdealSpikeTagger+process.ecalBarrelTPAnalyzer)
