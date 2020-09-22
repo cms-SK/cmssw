@@ -26,7 +26,13 @@ ecalPh2::SpikeTaggerLDHLSAlgoV1::SpikeTaggerLDHLSAlgoV1(const std::shared_ptr<ec
 void ecalPh2::SpikeTaggerLDHLSAlgoV1::processEvent(const EBDigiCollection &ebDigis, EcalEBTrigPrimDigiCollection &ebTPs)
 {
   std::cout << "Processing SpikeTaggerLDHLSAlgoV1" << std::endl;
-  std::cout << "This frame has size: " << ebDigis.size() << std::endl;
+  // do not run if there are no inputs
+  if (ebDigis.empty()) {
+    std::cout << "This frame is empty. Not running the SpikeTaggerLDHLSAlgoV1 algorithm." << std::endl;
+    return;
+  } else {
+    std::cout << "This frame has size: " << ebDigis.size() << std::endl;
+  }
 
   // Since one FPGA handles 300 channels (ecalPh2::hls::bcpspiketagger::nchannels)
   // the HLS findSpikes function expects samples from as many channels each
