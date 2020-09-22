@@ -83,7 +83,7 @@ EcalBCPFileInputSource::EcalBCPFileInputSource(const edm::ParameterSet& iConfig,
   ebDigiToken_(produces<EBDigiCollection>())
 {
   if (fileNames().empty()) {
-    cms::Exception("FileOpenError") << "No input file";
+    throw cms::Exception("FileOpenError") << "No input file";
   }
   fname_ = fileNames()[0].substr(fileNames()[0].find(":") + 1);
   openFile();
@@ -108,7 +108,7 @@ void EcalBCPFileInputSource::openFile()
   if (!fstream_.is_open()) {
     fstream_.open(fname_);
     if (!fstream_.good()) {
-      cms::Exception("FileOpenError") << "Failed to open input file " << fname_;
+      throw cms::Exception("FileOpenError") << "Failed to open input file " << fname_;
     }
   }
 }
