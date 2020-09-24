@@ -29,7 +29,8 @@
    <class name="EcalTriggerPrimitiveDigi" ClassVersion="12">
     <version ClassVersion="12" checksum="3058718200"/>
    </class>
-   <class name="EcalEBTriggerPrimitiveDigi" ClassVersion="14">
+   <class name="EcalEBTriggerPrimitiveDigi" ClassVersion="15">
+    <version ClassVersion="15" checksum="536099168"/>
     <version ClassVersion="14" checksum="3583827889"/>
    </class>
    <class name="EcalEBPhase2TriggerPrimitiveDigi" ClassVersion="3">
