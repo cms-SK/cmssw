@@ -29,6 +29,7 @@
 
 #include <TH1I.h>
 #include <TH1F.h>
+#include <TH2I.h>
 #include <TH2F.h>
 #include <TTree.h>
 #include <TFile.h>
@@ -54,24 +55,33 @@ class EcalBarrelTPAnalyzer : public edm::one::EDAnalyzer<> {
 
   edm::Service<TFileService> fs_;
 
+  // TP1 histograms
   TH1I *hNumTPs1_;
   TH1I *hTPEncodedEt1_;
   TH1I *hTPL1aSpike1_;
   TH1I *hTPTime1_;
+  TH1F *hTPAuxSpikeLD1_;
   TH2I *h2TPEncodedEtVsCh1_;
   TH2I *h2TPEncodedEtVsSpike1_;
+  TH2F *h2TPAuxSpikeLDVsL1aSpike1_;
 
+  // TP2 histograms
   TH1I *hNumTPs2_;
   TH1I *hTPEncodedEt2_;
   TH1I *hTPL1aSpike2_;
   TH1I *hTPTime2_;
+  TH1F *hTPAuxSpikeLD2_;
   TH2I *h2TPEncodedEtVsCh2_;
   TH2I *h2TPEncodedEtVsSpike2_;
+  TH2F *h2TPAuxSpikeLDVsL1aSpike2_;
 
+  // TP1 vs. TP2 histograms
   TH2I *h2TPEncodedEt1Vs2_;
   TH2I *h2TPL1aSpike1Vs2_;
   TH2I *h2TPTime1Vs2_;
+  TH2F *h2TPAuxSpikeLD1Vs2_;
 
+  // TP clusters 1 histograms
   TH1I *hNumTPClusters1_;
   TH1I *hTPClusterHwEt1_;
   TH1I *hTPClusterHwTime1_;
@@ -80,6 +90,7 @@ class EcalBarrelTPAnalyzer : public edm::one::EDAnalyzer<> {
   TH1I *hTPClusterNumOfCrystals1_;
   TH1I *hTPClusterSpike1_;
 
+  // TP clusters 2 histograms
   TH1I *hNumTPClusters2_;
   TH1I *hTPClusterHwEt2_;
   TH1I *hTPClusterHwTime2_;
@@ -93,10 +104,12 @@ class EcalBarrelTPAnalyzer : public edm::one::EDAnalyzer<> {
   std::vector<int> tpEncodedEt1_;
   std::vector<int> tpL1aSpike1_;
   std::vector<int> tpTime1_;
+  std::vector<float> tpAuxSpikeLD1_;
   int numTPs2_;
   std::vector<int> tpEncodedEt2_;
   std::vector<int> tpL1aSpike2_;
   std::vector<int> tpTime2_;
+  std::vector<float> tpAuxSpikeLD2_;
   int numTPClusters1_;
   std::vector<int> tpClusterHwEt1_;
   std::vector<int> tpClusterHwTime1_;
@@ -144,13 +157,16 @@ EcalBarrelTPAnalyzer::EcalBarrelTPAnalyzer(const edm::ParameterSet& iConfig) :
   tree_->Branch("tpEncodedEt1", &tpEncodedEt1_);
   tree_->Branch("tpL1aSpike1", &tpL1aSpike1_);
   tree_->Branch("tpTime1", &tpTime1_);
+  tree_->Branch("tpAuxSpikeLD1", &tpAuxSpikeLD1_);
 
   hNumTPs1_ = fs_->make<TH1I>("numTPs1", ("number of TPs in " + tpCollName1_ + ";# TP;").c_str(), 100, 0, 100);
   hTPEncodedEt1_ = fs_->make<TH1I>("tpEncodedEt1", ("encoded E_{T} of sample of interest in " + tpCollName1_ + ";encoded E_{T};").c_str(), 1024, 0, 1024);
   hTPL1aSpike1_ = fs_->make<TH1I>("tpL1aSpike1", ("spike flag of sample of interest in " + tpCollName1_ + ";spike;").c_str(), 2, 0, 2);
   hTPTime1_ = fs_->make<TH1I>("tpTime1", ("time of sample of interest in " + tpCollName1_ + ";time;").c_str(), 32, 0, 32);
+  hTPAuxSpikeLD1_ = fs_->make<TH1F>("tpAuxSpikeLD1", ("spike LD of sample of interest in " + tpCollName1_ + ";LD;").c_str(), 200, -2., 2.);
   h2TPEncodedEtVsCh1_ = fs_->make<TH2I>("tpEncodedEtVsCh1", ("encoded E_{T} vs. TP index of sample of interest in " + tpCollName1_ + ";encoded E_{T};TP index").c_str(), 1024, 0, 1024, 20, 0, 20);
   h2TPEncodedEtVsSpike1_ = fs_->make<TH2I>("tpEncodedEtVsSpike1", ("encoded E_{T} vs. spike flag of sample of interest in " + tpCollName1_ + ";encoded E_{T};spike").c_str(), 1024, 0, 1024, 2, 0, 2);
+  h2TPAuxSpikeLDVsL1aSpike1_ = fs_->make<TH2F>("tpAuxSpikeLDVsL1aSpike1", ("spike LD vs. spike flag of sample of interest in " + tpCollName1_ + ";LD;spike").c_str(), 200, -2., 2., 2, 0., 2.);
 
   // TPs of collection 2 if available
   if (iConfig.getParameter<edm::InputTag>("barrelTPColl2").label() != "") {
@@ -160,17 +176,21 @@ EcalBarrelTPAnalyzer::EcalBarrelTPAnalyzer(const edm::ParameterSet& iConfig) :
     tree_->Branch("tpEncodedEt2", &tpEncodedEt2_);
     tree_->Branch("tpL1aSpike2", &tpL1aSpike2_);
     tree_->Branch("tpTime2", &tpTime2_);
+    tree_->Branch("tpAuxSpikeLD2", &tpAuxSpikeLD2_);
 
     hNumTPs2_ = fs_->make<TH1I>("numTPs2", ("number of TPs in " + tpCollName2_ + ";# TP;").c_str(), 100, 0, 100);
     hTPEncodedEt2_ = fs_->make<TH1I>("tpEncodedEt2", ("encoded E_{T} of sample of interest in " + tpCollName2_ + ";encoded E_{T};").c_str(), 1024, 0, 1024);
     hTPL1aSpike2_ = fs_->make<TH1I>("tpL1aSpike2", ("spike flag of sample of interest in " + tpCollName2_ + ";spike;").c_str(), 2, 0, 2);
     hTPTime2_ = fs_->make<TH1I>("tpTime2", ("time of sample of interest in " + tpCollName2_ + ";time;").c_str(), 32, 0, 32);
+    hTPAuxSpikeLD2_ = fs_->make<TH1F>("tpAuxSpikeLD2", ("spike LD in " + tpCollName2_ + ";LD;").c_str(), 200, -2., 2.);
     h2TPEncodedEtVsCh2_ = fs_->make<TH2I>("tpEncodedEtVsCh2", ("encoded E_{T} vs. TP index of sample of interest in " + tpCollName2_ + ";encoded E_{T};TP index").c_str(), 1024, 0, 1024, 20, 0, 20);
     h2TPEncodedEtVsSpike2_ = fs_->make<TH2I>("tpEncodedEtVsSpike2", ("encoded E_{T} vs. spike flag of sample of interest in " + tpCollName2_ + ";encoded E_{T};spike").c_str(), 1024, 0, 1024, 2, 0, 2);
+    h2TPAuxSpikeLDVsL1aSpike2_ = fs_->make<TH2F>("tpAuxSpikeLDVsL1aSpike2", ("spike LD vs. spike flag of sample of interest in " + tpCollName2_ + ";LD;spike").c_str(), 200, -2., 2., 2, 0., 2.);
 
     h2TPEncodedEt1Vs2_ = fs_->make<TH2I>("tpEncodedEt1Vs2", ("encoded E_{T} flag of sample of interest in " + tpCollName1_ + " vs. " + tpCollName2_ + ";" + tpCollName1_ + " encoded E_{T};" + tpCollName2_ + " encoded E_{T}").c_str(), 1024, 0, 1024, 1024, 0, 1024);
     h2TPL1aSpike1Vs2_ = fs_->make<TH2I>("tpL1aSpike1Vs2", ("spike flag of sample of interest in " + tpCollName1_ + " vs. " + tpCollName2_ + ";" + tpCollName1_ + " spike;" + tpCollName2_ + " spike").c_str(), 2, 0, 2, 2, 0, 2);
     h2TPTime1Vs2_ = fs_->make<TH2I>("tpTime1Vs2", ("time of sample of interest in " + tpCollName1_ + " vs. " + tpCollName2_ + ";" + tpCollName1_ + " time;" + tpCollName2_ + " time").c_str(), 32, 0, 32, 32, 0, 32);
+    h2TPAuxSpikeLD1Vs2_ = fs_->make<TH2F>("tpAuxSpikeLD1Vs2", ("spike LD of sample of interest in " + tpCollName1_ + " vs. " + tpCollName2_ + ";" + tpCollName1_ + " LD;" + tpCollName2_ + " LD").c_str(), 100, -1., 1., 100, -1., 1.);
   }
 
   // TP clusters of collection 1
@@ -227,9 +247,11 @@ void EcalBarrelTPAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSet
   tpEncodedEt1_.clear();
   tpL1aSpike1_.clear();
   tpTime1_.clear();
+  tpAuxSpikeLD1_.clear();
   tpEncodedEt2_.clear();
   tpL1aSpike2_.clear();
   tpTime2_.clear();
+  tpAuxSpikeLD2_.clear();
   tpClusterHwEt1_.clear();
   tpClusterHwTime1_.clear();
   tpClusterHwEta1_.clear();
@@ -263,23 +285,28 @@ void EcalBarrelTPAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSet
   tpEncodedEt1_.reserve(numTPs1_);
   tpL1aSpike1_.reserve(numTPs1_);
   tpTime1_.reserve(numTPs1_);
+  tpAuxSpikeLD1_.reserve(numTPs1_);
 
   // fill histograms for TPs
   // histograms for coll1
   hNumTPs1_->Fill(numTPs1_);
   for (auto it = ebTPs1->begin(); it != ebTPs1->end(); ++it) {
     const auto sample = it->sample(static_cast<int>(soi_));
+    const auto aux = it->auxiliary(static_cast<int>(soi_));
 
     tpEncodedEt1_.emplace_back(sample.encodedEt());
     tpL1aSpike1_.emplace_back(sample.l1aSpike());
     tpTime1_.emplace_back(sample.time());
+    tpAuxSpikeLD1_.emplace_back(aux.spikeLD());
 
     hTPEncodedEt1_->Fill(sample.encodedEt());
     hTPL1aSpike1_->Fill(sample.l1aSpike());
     hTPTime1_->Fill(sample.time());
+    hTPAuxSpikeLD1_->Fill(aux.spikeLD());
     const auto i = std::distance(ebTPs1->begin(), it);
     h2TPEncodedEtVsCh1_->Fill(sample.encodedEt(), i);
     h2TPEncodedEtVsSpike1_->Fill(sample.encodedEt(), sample.l1aSpike());
+    h2TPAuxSpikeLDVsL1aSpike1_->Fill(aux.spikeLD(), sample.l1aSpike());
   }
 
   // TPs of collection 2 if available
@@ -288,30 +315,37 @@ void EcalBarrelTPAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSet
     tpEncodedEt2_.reserve(numTPs2_);
     tpL1aSpike2_.reserve(numTPs2_);
     tpTime2_.reserve(numTPs2_);
+    tpAuxSpikeLD2_.reserve(numTPs1_);
 
     // histograms for coll2
     hNumTPs2_->Fill(numTPs2_);
     auto it1 = ebTPs1->begin();
     for (auto it = ebTPs2->begin(); it != ebTPs2->end(); ++it) {
       const auto sample = it->sample(static_cast<int>(soi_));
+      const auto aux = it->auxiliary(static_cast<int>(soi_));
 
       tpEncodedEt2_.emplace_back(sample.encodedEt());
       tpL1aSpike2_.emplace_back(sample.l1aSpike());
       tpTime2_.emplace_back(sample.time());
+      tpAuxSpikeLD2_.emplace_back(aux.spikeLD());
 
       hTPEncodedEt2_->Fill(sample.encodedEt());
       hTPL1aSpike2_->Fill(sample.l1aSpike());
       hTPTime2_->Fill(sample.time());
+      hTPAuxSpikeLD2_->Fill(aux.spikeLD());
       const auto i = std::distance(ebTPs2->begin(), it);
       h2TPEncodedEtVsCh2_->Fill(sample.encodedEt(), i);
       h2TPEncodedEtVsSpike2_->Fill(sample.encodedEt(), sample.l1aSpike());
+      h2TPAuxSpikeLDVsL1aSpike2_->Fill(aux.spikeLD(), sample.l1aSpike());
 
       // comparison histograms of coll1 with coll2
       if (it1 != ebTPs1->end()) {
         const auto sample1 = it1->sample(static_cast<int>(soi_));
+        const auto aux1 = it1->auxiliary(static_cast<int>(soi_));
         h2TPEncodedEt1Vs2_->Fill(sample1.encodedEt(), sample.encodedEt());
         h2TPL1aSpike1Vs2_->Fill(sample1.l1aSpike(), sample.l1aSpike());
         h2TPTime1Vs2_->Fill(sample1.time(), sample.time());
+        h2TPAuxSpikeLD1Vs2_->Fill(aux1.spikeLD(), aux.spikeLD());
         ++it1;
       }
     }
