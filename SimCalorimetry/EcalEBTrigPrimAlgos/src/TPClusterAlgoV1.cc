@@ -103,7 +103,7 @@ void ecalPh2::TPClusterAlgoV1::processEvent(const EcalEBTrigPrimDigiCollection &
       const auto ieta = ebTPId.ieta();
       const auto iphi = ebTPId.iphi();
 
-      std::cout << "Adding TP cluster et=" << sum << ", ieta=" << ieta << ", iphi=" << iphi << ", spike=" << spike << ", swiss cross=" << swissCross << std::endl;
+      std::cout << "Adding TP cluster et=" << sum << ", ieta=" << ieta << ", iphi=" << iphi << ", number of crystals=" << nTPAdded << ", spike=" << spike << ", swiss cross=" << swissCross << std::endl;
       ebTPClusters.emplace_back(EcalEBTriggerPrimitiveCluster(sum, time, ieta, iphi, nTPAdded, spike));
     }
   }
