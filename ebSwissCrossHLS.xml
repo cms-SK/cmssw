@@ -1,0 +1,13 @@
+
+<!-- USED TO ADD HLS LIBRARIES AND HEADER FILES TO CMSSW -->
+<!-- TO USE IT, DO: 'scram setup /path/to/ebSwissCrossHLS.xml -->
+<!-- THEN ADD <use name="EbSwissCrossHLS"/> to BuildFile.xml -->
+
+<tool name="EbSwissCrossHLS" version="0.1">
+   <lib name="EbSwissCrossHLS"/>
+   <client>
+       <environment name="HLS_BASE" default="/home/ppd/mfq48616/cms/ecal_phase2/bcp/hls/EbSwissCross/"/>
+       <environment name="LIBDIR" default="$HLS_BASE/lib/"/>
+       <environment name="INCLUDE" default="$HLS_BASE/include/"/>
+   </client>
+</tool>

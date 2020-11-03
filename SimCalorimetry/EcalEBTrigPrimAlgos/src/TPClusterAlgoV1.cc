@@ -28,7 +28,7 @@ ecalPh2::TPClusterAlgoV1::TPClusterAlgoV1(const std::shared_ptr<ecalPh2::EcalBcp
 void ecalPh2::TPClusterAlgoV1::processEvent(const EcalEBTrigPrimDigiCollection &ebTPs, std::vector<EcalEBTriggerPrimitiveCluster> &ebTPClusters)
 {
   std::cout << "Processing TPClusterAlgoV1" << std::endl;
-  std::cout << "This frame has size: " << ebTPs.size() << std::endl;
+  std::cout << "This TP collection has size: " << ebTPs.size() << std::endl;
 
   for (size_t i = 0; i < ebTPs.size(); ++i) {
     bool goodSeed = true; // start with the assumption that this is a good seed

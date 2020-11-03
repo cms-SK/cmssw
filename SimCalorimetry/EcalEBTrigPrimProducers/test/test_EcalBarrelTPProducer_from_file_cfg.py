@@ -62,6 +62,10 @@ process.ecalBcpPayloadParamsEsProducer = cms.ESProducer("EcalBcpPayloadParamsESP
             perCrystalParams = cms.VPSet(
             )
         ),
+        cms.PSet(
+            algo = cms.string("tpClusterAlgo"),
+            type = cms.string("hls"), # crystalSumWithSwissCrossSpike, hls
+        ),
     )
 )
 
@@ -121,6 +125,11 @@ process.simEcalBarrelTPDigisIdealSpikeTagger = cms.EDProducer("EcalBarrelTPProdu
                     #weights = cms.vdouble(1.52, -2.10, 1.81, -0.65) # weights used in LD3 HLS algo
                 )
             )
+        ),
+        cms.PSet(
+            algo = cms.string("tpClusterAlgo"),
+            type = cms.string("crystalSumWithSwissCrossSpike"), # crystalSumWithSwissCrossSpike, hls
+            # the rest of the parameters is currently hardcoded in TPClusterAlgoV1.cc
         ),
     )
 )

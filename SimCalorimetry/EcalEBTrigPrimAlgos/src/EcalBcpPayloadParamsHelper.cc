@@ -42,6 +42,8 @@ void ecalPh2::EcalBcpPayloadParamsHelper::createFromPSet(const edm::ParameterSet
     if (algo == "spikeTaggerLd") {
       setSpikeTaggerLdType(algoConfig.getParameter<std::string>("type"));
       setPerCrystalSpikeTaggerParams(algoConfig.getParameter<std::vector<edm::ParameterSet>>("perCrystalParams"));
+    } else if (algo == "tpClusterAlgo") {
+      setTpClusterAlgoType(algoConfig.getParameter<std::string>("type"));
     } else if (algo == "someOtherAlgo") {
       // get some other algo configuration parameters
     } else {
@@ -50,6 +52,7 @@ void ecalPh2::EcalBcpPayloadParamsHelper::createFromPSet(const edm::ParameterSet
   }
 }
 
+//////////////////////////////////////////////////////////////////////////////
 // Global parameters
 unsigned int ecalPh2::EcalBcpPayloadParamsHelper::fwVersion() const
 {
@@ -88,6 +91,7 @@ void ecalPh2::EcalBcpPayloadParamsHelper::setSampleOfInterest(const EBDetId &det
   }
 }
 
+//////////////////////////////////////////////////////////////////////////////
 // Spike tagger LD parameters
 std::string ecalPh2::EcalBcpPayloadParamsHelper::spikeTaggerLdType() const
 {
@@ -143,6 +147,23 @@ void ecalPh2::EcalBcpPayloadParamsHelper::setSpikeTaggerLdWeights(const EBDetId 
   crystalNodes_[rawId][kCrystalSpikeTaggerLdWeights].dparams_ = weights;
 }
 
+//////////////////////////////////////////////////////////////////////////////
+// TP clustering algo parameters
+std::string ecalPh2::EcalBcpPayloadParamsHelper::tpClusterAlgoType() const
+{
+  return nodes_[kGlobalTpClusterAlgoParams].sparams_.size() > SIdx::kTpClusterAlgoType
+      ? nodes_[kGlobalTpClusterAlgoParams].sparams_[SIdx::kTpClusterAlgoType] : "";
+}
+
+void ecalPh2::EcalBcpPayloadParamsHelper::setTpClusterAlgoType(const std::string &type)
+{
+  if (nodes_[kGlobalTpClusterAlgoParams].sparams_.size() > SIdx::kTpClusterAlgoType) {
+    nodes_[kGlobalTpClusterAlgoParams].sparams_[SIdx::kTpClusterAlgoType] = type;
+  } else {
+    nodes_[kGlobalTpClusterAlgoParams].sparams_.emplace_back(type);
+  }
+}
+
 // print parameters to stream:
 void ecalPh2::EcalBcpPayloadParamsHelper::print(std::ostream &out) const
 {
@@ -159,6 +180,8 @@ void ecalPh2::EcalBcpPayloadParamsHelper::print(std::ostream &out) const
   //for (const auto weight : this->spikeTaggerLdWeights()) {
   //  out << "    " << weight << std::endl;
   //}
+  out << "TP clustering algo parameters:" << std::endl;
+  out << "  Type " << this->tpClusterAlgoType() << std::endl;
 }
 
 std::ostream & operator<<(std::ostream &out, const ecalPh2::EcalBcpPayloadParamsHelper &params)

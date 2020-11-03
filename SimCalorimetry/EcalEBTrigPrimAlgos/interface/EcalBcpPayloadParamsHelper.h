@@ -36,6 +36,10 @@ class EcalBcpPayloadParamsHelper : public EcalBcpPayloadParams {
   std::vector<double> spikeTaggerLdWeights(const EBDetId &detId) const;
   void setSpikeTaggerLdWeights(const EBDetId &detId, const std::vector<double> &weights);
 
+  // TP clustering algo parameters
+  std::string tpClusterAlgoType() const;
+  void setTpClusterAlgoType(const std::string &type);
+
   // print parameters to stream:
   void print(std::ostream &out) const;
   friend std::ostream & operator<<(std::ostream &out, const EcalBcpPayloadParamsHelper &params);
@@ -46,6 +50,7 @@ class EcalBcpPayloadParamsHelper : public EcalBcpPayloadParams {
   enum EcalBcpPayloadParamNode {
     kGlobalAlgoParams = 0,
     kGlobalSpikeTaggerLdParams,
+    kGlobalTpClusterAlgoParams,
     NUM_NODES
   };
 
@@ -62,7 +67,7 @@ class EcalBcpPayloadParamsHelper : public EcalBcpPayloadParams {
   enum DIdx {kSpikeThreshold = 0};
   enum UIdx {kFwVersion = 0, kSampleOfInterest = 0};
   enum IIdx {};
-  enum SIdx {kSpikeTaggerLdType = 0};
+  enum SIdx {kSpikeTaggerLdType = 0, kTpClusterAlgoType = 0};
 
   void setSamplesOfInterest(const std::vector<edm::ParameterSet> &pSets);
   void setPerCrystalSpikeTaggerParams(const std::vector<edm::ParameterSet> &pSets);
