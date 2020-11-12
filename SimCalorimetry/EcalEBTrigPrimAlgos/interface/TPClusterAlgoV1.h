@@ -13,8 +13,11 @@ class TPClusterAlgoV1 : public TPClusterAlgo {
   void processEvent(const EcalEBTrigPrimDigiCollection &ebTPs, std::vector<EcalEBTriggerPrimitiveCluster> &ebTPClusters) override;
 
  private:
+  const bool doCluster_;
+  const bool doSwissCross_;
   const int iEtaDiffMax_;
   const int iPhiDiffMax_;
+  const bool useLDSpikesInSum_;
   const int tpClusterThreshold_;
   int nTPInCluster_;
   const float swissCrossSpikeThreshold_;
