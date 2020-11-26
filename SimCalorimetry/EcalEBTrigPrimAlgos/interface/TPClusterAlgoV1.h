@@ -15,11 +15,11 @@ class TPClusterAlgoV1 : public TPClusterAlgo {
  private:
   const bool doCluster_;
   const bool doSwissCross_;
-  const int iEtaDiffMax_;
-  const int iPhiDiffMax_;
+  const unsigned int iEtaDiffMax_;
+  const unsigned int iPhiDiffMax_;
   const bool useLDSpikesInSum_;
-  const int tpClusterThreshold_;
-  int nTPInCluster_;
+  const unsigned int tpClusterThreshold_;
+  unsigned int nTPInCluster_;
   const float swissCrossSpikeThreshold_;
 };
 

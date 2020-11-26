@@ -51,10 +51,10 @@ void ecalPh2::TPClusterAlgoV1::processEvent(const EcalEBTrigPrimDigiCollection &
       continue;
     }
 
-    int nTPAdded = 1;
-    int nSwissCrossAdded = 0;
-    int sum = seedEt;
-    int swissCrossSum = 0;
+    unsigned int nTPAdded = 1;
+    unsigned int nSwissCrossAdded = 0;
+    unsigned int sum = seedEt;
+    unsigned int swissCrossSum = 0;
 
     // it is not a good seed if it has an LD spike flag and the LD flags are not ignored
     if (ebTP[peakIdx].l1aSpike() and not useLDSpikesInSum_) {
@@ -73,7 +73,7 @@ void ecalPh2::TPClusterAlgoV1::processEvent(const EcalEBTrigPrimDigiCollection &
       const auto l1aSpike = ebTPs[j][peakIdx].l1aSpike();
 
       // calculate cluster ET sum
-      if (doCluster_ and distEta <= iEtaDiffMax_ and distPhi <= iPhiDiffMax_) {
+      if (doCluster_ and std::abs(distEta) <= iEtaDiffMax_ and std::abs(distPhi) <= iPhiDiffMax_) {
         //std::cout << "seed et: " << seedEt << ", seed ieta: " << ebTPId.ieta() << ", seed iphi: " << ebTPId.iphi() << ", et: " << encodedEt << ", distEta: " << distEta << ", distPhi: " << distPhi << ", spike: " << ebTPs[j][peakIdx].l1aSpike() << ", goodSeed: " << goodSeed << std::endl;
         if (goodSeed) {
           if (useLDSpikesInSum_ or (l1aSpike == 0 and not useLDSpikesInSum_)) {
@@ -128,6 +128,12 @@ void ecalPh2::TPClusterAlgoV1::processEvent(const EcalEBTrigPrimDigiCollection &
         nTPAdded = nSwissCrossAdded;
       }
 
+      // set Et to maximum in case of 10 bit overflow
+      constexpr unsigned int etMax = (1 << 10) - 1;
+      if (sum > etMax) {
+        std::cout << "ET overflow. sum=" << sum << " > " << etMax << ". Setting ET to " << etMax << std::endl;
+        sum = etMax;
+      }
       std::cout << "Adding TP cluster et=" << sum << ", ieta=" << ieta << ", iphi=" << iphi << ", number of crystals=" << nTPAdded << ", spike=" << spike << ", swiss cross=" << swissCross << std::endl;
       ebTPClusters.emplace_back(EcalEBTriggerPrimitiveCluster(sum, time, ieta, iphi, nTPAdded, spike));
     }
