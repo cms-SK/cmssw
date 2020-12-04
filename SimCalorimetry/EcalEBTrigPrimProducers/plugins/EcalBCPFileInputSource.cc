@@ -62,6 +62,7 @@ class EcalBCPFileInputSource : public edm::ProducerSourceFromFiles {
   unsigned long runnr_;
   unsigned long evtnr_;
   unsigned int startSample_;
+  int skipUntilEventNr_;
 
   std::string line_;
   unsigned int nchannels_;
@@ -79,6 +80,7 @@ EcalBCPFileInputSource::EcalBCPFileInputSource(const edm::ParameterSet& iConfig,
   runnr_(iConfig.getUntrackedParameter<unsigned int>("runNumber")),
   evtnr_(iConfig.getUntrackedParameter<unsigned int>("firstEventNumber")),
   startSample_(iConfig.getUntrackedParameter<unsigned int>("startSample")),
+  skipUntilEventNr_(evtnr_ + iConfig.getUntrackedParameter<int>("skipEvents", 0)),
   nchannels_(0),
   ebDigiToken_(produces<EBDigiCollection>())
 {
@@ -153,52 +155,55 @@ EcalBCPFileInputSource::setRunAndEventInfo(edm::EventID& id, edm::TimeValue_t& t
     return false;
   }
 
-  id = edm::EventID(runnr_, id.luminosityBlock(), evtnr_);
+  do {
+    id = edm::EventID(runnr_, id.luminosityBlock(), evtnr_);
 
-  EBDigiCollection ebDigis;
-  ebDigis.reserve(nchannels_);
-  for (unsigned int i = 0; i < nchannels_; ++i) {
-    ebDigis.push_back(detIds_[i].rawId());
-  }
+    EBDigiCollection ebDigis;
+    ebDigis.reserve(nchannels_);
+    for (unsigned int i = 0; i < nchannels_; ++i) {
+      ebDigis.push_back(detIds_[i].rawId());
+    }
 
-  unsigned int s = 0;
-  while (not fstream_.eof()) {
-    std::istringstream strstream(line_);
-    std::cout << "sample " << s << ", line: " << line_;
+    unsigned int s = 0;
+    while (not fstream_.eof()) {
+      std::istringstream strstream(line_);
+      std::cout << "sample " << s << ", line: " << line_;
 
-    // Only take as many frames as the ECAL data format can handle
-    if (s >= startSample_ and s < startSample_ + EcalDataFrame::MAXSAMPLES) {
-      std::cout << ", --> take";
-      std::string labelstr;
-      std::string framenumberstr;
-      std::string colonstr;
-      int adc;
-      bool first_sample;
-      strstream >> labelstr >> framenumberstr >> colonstr;
-      for (unsigned int i = 0; i < nchannels_; ++i) {
-        strstream >> adc >> first_sample;
-        EcalMGPASample sample(adc, 1); // EcalMGPASample applies a mask of 0xFFF on adc count (max. adc: 4095)
-        static_cast<EcalDataFrame>(ebDigis[i]).setSample(s - startSample_, sample);
+      // Only take as many frames as the ECAL data format can handle
+      if (s >= startSample_ and s < startSample_ + EcalDataFrame::MAXSAMPLES) {
+        std::cout << ", --> take";
+        std::string labelstr;
+        std::string framenumberstr;
+        std::string colonstr;
+        int adc;
+        bool first_sample;
+        strstream >> labelstr >> framenumberstr >> colonstr;
+        for (unsigned int i = 0; i < nchannels_; ++i) {
+          strstream >> adc >> first_sample;
+          EcalMGPASample sample(adc, 1); // EcalMGPASample applies a mask of 0xFFF on adc count (max. adc: 4095)
+          static_cast<EcalDataFrame>(ebDigis[i]).setSample(s - startSample_, sample);
+        }
+      }
+      std::cout << std::endl;
+      ++s;
+      getline(fstream_, line_);
+      // if first_sample is 1 this is already the line of the next event
+      if (line_.rfind("1") == line_.size() - 1) {
+        break;
       }
     }
-    std::cout << std::endl;
-    ++s;
-    getline(fstream_, line_);
-    // if first_sample is 1 this is already the line of the next event
-    if (line_.rfind("1") == line_.size() - 1) {
-      break;
-    }
-  }
 
-  //for (unsigned int i = 0; i < ebDigis.size(); ++i) {
-  //  EBDataFrame ebDigi = ebDigis[i]; 
-  //  for (int j = 0; j < ebDigi.size(); ++j) {
-  //    std::cout << "channel " << i << ", sample " << j << ", adc: " << ebDigi[j].adc() << std::endl;
-  //  }
-  //}
+    //for (unsigned int i = 0; i < ebDigis.size(); ++i) {
+    //  EBDataFrame ebDigi = ebDigis[i];
+    //  for (int j = 0; j < ebDigi.size(); ++j) {
+    //    std::cout << "channel " << i << ", sample " << j << ", adc: " << ebDigi[j].adc() << std::endl;
+    //  }
+    //}
 
-  ebDigis_.swap(ebDigis);
-  ++evtnr_;
+    ebDigis_.swap(ebDigis);
+    ++evtnr_;
+  } while (static_cast<long>(evtnr_) <= skipUntilEventNr_);
+
 
   return true;
 }
