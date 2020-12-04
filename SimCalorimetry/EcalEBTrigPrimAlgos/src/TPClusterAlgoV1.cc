@@ -24,10 +24,13 @@ ecalPh2::TPClusterAlgoV1::TPClusterAlgoV1(const std::shared_ptr<ecalPh2::EcalBcp
   iEtaDiffMax_(1),
   iPhiDiffMax_(1),
   useLDSpikesInSum_(false),
-  tpClusterThreshold_(1),
+  seedEtThreshold_(1),
+  clusterCrystalEtThreshold_(1),
+  swissCrossCrystalEtThreshold_(1),
+  tpClusterEtThreshold_(1),
   swissCrossSpikeThreshold_(0.95)
 {
-  // hard coded cluster size and threshold for the moment
+  // hard coded flags, cluster size, and thresholds for the moment
   // TODO: get parameters from configuration
 
   nTPInCluster_ = (2 * iEtaDiffMax_ + 1) * (2 * iPhiDiffMax_ + 1);
@@ -47,11 +50,12 @@ void ecalPh2::TPClusterAlgoV1::processEvent(const EcalEBTrigPrimDigiCollection &
     // get the algo parameters for this crystal
     const auto peakIdx = ecalBcpPayloadParamsHelper_->sampleOfInterest(ebTPId);
     const auto seedEt = ebTP[peakIdx].encodedEt();
-    if (seedEt == 0) {
+    if (seedEt < seedEtThreshold_) {
       continue;
     }
 
     unsigned int nTPAdded = 1;
+    unsigned int nSwissCrossChecked = 0;
     unsigned int nSwissCrossAdded = 0;
     unsigned int sum = seedEt;
     unsigned int swissCrossSum = 0;
@@ -73,7 +77,7 @@ void ecalPh2::TPClusterAlgoV1::processEvent(const EcalEBTrigPrimDigiCollection &
       const auto l1aSpike = ebTPs[j][peakIdx].l1aSpike();
 
       // calculate cluster ET sum
-      if (doCluster_ and std::abs(distEta) <= iEtaDiffMax_ and std::abs(distPhi) <= iPhiDiffMax_) {
+      if (doCluster_ and encodedEt >= clusterCrystalEtThreshold_ and std::abs(distEta) <= iEtaDiffMax_ and std::abs(distPhi) <= iPhiDiffMax_) {
         //std::cout << "seed et: " << seedEt << ", seed ieta: " << ebTPId.ieta() << ", seed iphi: " << ebTPId.iphi() << ", et: " << encodedEt << ", distEta: " << distEta << ", distPhi: " << distPhi << ", spike: " << ebTPs[j][peakIdx].l1aSpike() << ", goodSeed: " << goodSeed << std::endl;
         if (goodSeed) {
           if (useLDSpikesInSum_ or (l1aSpike == 0 and not useLDSpikesInSum_)) {
@@ -94,14 +98,15 @@ void ecalPh2::TPClusterAlgoV1::processEvent(const EcalEBTrigPrimDigiCollection &
 
       // calculate swiss cross sum
       if (doSwissCross_ and std::abs(distEta) + std::abs(distPhi) == 1) {
-        if (useLDSpikesInSum_ or (l1aSpike == 0 and not useLDSpikesInSum_)) {
+        if (encodedEt >= swissCrossCrystalEtThreshold_ and (useLDSpikesInSum_ or (l1aSpike == 0 and not useLDSpikesInSum_))) {
           swissCrossSum += encodedEt;
+          ++nSwissCrossAdded;
         }
-        ++nSwissCrossAdded;
+        ++nSwissCrossChecked;
       }
 
       // break if all desired crystals were already considered
-      if (nSwissCrossAdded == 4) {
+      if (nSwissCrossChecked == 4) {
         if (nTPAdded >= nTPInCluster_ or not goodSeed) {
           break;
         }
@@ -117,15 +122,15 @@ void ecalPh2::TPClusterAlgoV1::processEvent(const EcalEBTrigPrimDigiCollection &
     }
 
     // add a cluster object if the cluster passes the threshold or if the seed is a spike
-    if ((doCluster_ and goodSeed and sum >= tpClusterThreshold_) or spike) {
+    if ((doCluster_ and goodSeed and sum >= tpClusterEtThreshold_) or spike) {
       const auto time = ebTP[peakIdx].time();
       const auto ieta = ebTPId.ieta();
       const auto iphi = ebTPId.iphi();
 
       // if this is just a spike use the energy sum and number of added crystals from the swiss cross
-      if (spike and not (doCluster_ and goodSeed and sum >= tpClusterThreshold_)) {
+      if (spike and not (doCluster_ and goodSeed and sum >= tpClusterEtThreshold_)) {
         sum = swissCrossSum + seedEt;
-        nTPAdded = nSwissCrossAdded;
+        nTPAdded = nSwissCrossAdded + 1; // add also the seed crystal since it is in the cluster ET as well
       }
 
       // set Et to maximum in case of 10 bit overflow
