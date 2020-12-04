@@ -100,6 +100,9 @@ class EcalBarrelTPAnalyzer : public edm::one::EDAnalyzer<> {
   TH1I *hTPClusterSpike2_;
 
   TTree *tree_;
+  unsigned long long event_;
+  unsigned int lumiBlock_;
+  unsigned int run_;
   int numTPs1_;
   std::vector<int> tpEncodedEt1_;
   std::vector<int> tpL1aSpike1_;
@@ -151,6 +154,10 @@ EcalBarrelTPAnalyzer::EcalBarrelTPAnalyzer(const edm::ParameterSet& iConfig) :
   tpClusterCollName2_(iConfig.getUntrackedParameter<std::string>("tpClusterCollName2", "collection 2"))
 {
   tree_ = fs_->make<TTree>("ecalBarrelTPTree", "ecalBarrelTPTree");
+
+  tree_->Branch("event", &event_, "event/l");
+  tree_->Branch("lumiBlock", &lumiBlock_, "lumiBlock/i");
+  tree_->Branch("run", &run_, "run/i");
 
   // TPs of collection 1
   tree_->Branch("numTPs1", &numTPs1_, "numTPs1/I");
@@ -279,6 +286,10 @@ void EcalBarrelTPAnalyzer::analyze(const edm::Event& iEvent, const edm::EventSet
   if (compareWithTPClusterColl2_ == true) {
     iEvent.getByToken(ebTPClusterToken2_, ebTPClusters2);
   }
+
+  event_ = iEvent.eventAuxiliary().event();
+  lumiBlock_ = iEvent.eventAuxiliary().luminosityBlock();
+  run_ = iEvent.eventAuxiliary().run();
 
   // TPs of collection 1
   numTPs1_ = ebTPs1->size();
