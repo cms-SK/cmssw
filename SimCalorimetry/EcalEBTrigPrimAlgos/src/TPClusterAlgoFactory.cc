@@ -1,5 +1,5 @@
 ///
-/// \class ecalPh2::TPClusterAlgoFactory
+/// \class ecalph2::TPClusterAlgoFactory
 ///
 /// \author: Thomas Reis
 ///
@@ -20,7 +20,7 @@
 #include "SimCalorimetry/EcalEBTrigPrimAlgos/interface/TPClusterAlgoV1.h"
 #include "SimCalorimetry/EcalEBTrigPrimAlgos/interface/TPClusterHLSAlgoV1.h"
 
-ecalPh2::TPClusterAlgoFactory::ReturnType ecalPh2::TPClusterAlgoFactory::create(const std::shared_ptr<ecalPh2::EcalBcpPayloadParamsHelper> ecalBcpPayloadParamsHelper)
+ecalph2::TPClusterAlgoFactory::ReturnType ecalph2::TPClusterAlgoFactory::create(const std::shared_ptr<ecalph2::EcalBcpPayloadParamsHelper> ecalBcpPayloadParamsHelper)
 {
   ReturnType tpClusterAlgo;
 
@@ -35,20 +35,20 @@ ecalPh2::TPClusterAlgoFactory::ReturnType ecalPh2::TPClusterAlgoFactory::create(
   // factory
   if (algoType == "crystalSumWithSwissCrossSpike") {
     if (fwVersion >= 1) {
-      edm::LogInfo("ecalPh2::TPClusterAlgoFactory") << "Creating crystal sum TP clustering algo with swiss cross spike estimation for FW version " << fwStr;
-      tpClusterAlgo = std::make_unique<ecalPh2::TPClusterAlgoV1>(ecalBcpPayloadParamsHelper);
+      edm::LogInfo("ecalph2::TPClusterAlgoFactory") << "Creating crystal sum TP clustering algo with swiss cross spike estimation for FW version " << fwStr;
+      tpClusterAlgo = std::make_unique<ecalph2::TPClusterAlgoV1>(ecalBcpPayloadParamsHelper);
     } else {
-      edm::LogError("ecalPh2::TPClusterAlgoFactory") << "No crystal sum TP clustering algo with swiss cross spike estimation to create for FW version " << fwStr;
+      edm::LogError("ecalph2::TPClusterAlgoFactory") << "No crystal sum TP clustering algo with swiss cross spike estimation to create for FW version " << fwStr;
     }
   } else if (algoType == "hls") {
     if (fwVersion >= 1) {
-      edm::LogInfo("ecalPh2::TPClusterAlgoFactory") << "Creating HLS clustering LD algo for FW version " << fwStr;
-      tpClusterAlgo = std::make_unique<ecalPh2::TPClusterHLSAlgoV1>(ecalBcpPayloadParamsHelper);
+      edm::LogInfo("ecalph2::TPClusterAlgoFactory") << "Creating HLS clustering LD algo for FW version " << fwStr;
+      tpClusterAlgo = std::make_unique<ecalph2::TPClusterHLSAlgoV1>(ecalBcpPayloadParamsHelper);
     } else {
-      edm::LogError("ecalPh2::TPClusterAlgoFactory") << "No HLS clustering algo to create for FW version " << fwStr;
+      edm::LogError("ecalph2::TPClusterAlgoFactory") << "No HLS clustering algo to create for FW version " << fwStr;
     }
   } else {
-    edm::LogError("ecalPh2::TPClusterAlgoFactory") << "Unknown TP clustering LD algo type '" << algoType << "'";
+    edm::LogError("ecalph2::TPClusterAlgoFactory") << "Unknown TP clustering LD algo type '" << algoType << "'";
   }
 
   return tpClusterAlgo;

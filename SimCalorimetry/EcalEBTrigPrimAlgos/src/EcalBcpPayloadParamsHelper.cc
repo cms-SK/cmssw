@@ -15,20 +15,20 @@
 #include "FWCore/MessageLogger/interface/MessageLogger.h"
 #include "SimCalorimetry/EcalEBTrigPrimAlgos/interface/EcalBcpPayloadParamsHelper.h"
 
-ecalPh2::EcalBcpPayloadParamsHelper::EcalBcpPayloadParamsHelper() : EcalBcpPayloadParams() {
+ecalph2::EcalBcpPayloadParamsHelper::EcalBcpPayloadParamsHelper() : EcalBcpPayloadParams() {
   nodes_.resize(NUM_NODES);
 }
 
-ecalPh2::EcalBcpPayloadParamsHelper::EcalBcpPayloadParamsHelper(const EcalBcpPayloadParams &params) : EcalBcpPayloadParams(params) {
+ecalph2::EcalBcpPayloadParamsHelper::EcalBcpPayloadParamsHelper(const EcalBcpPayloadParams &params) : EcalBcpPayloadParams(params) {
   nodes_.resize(NUM_NODES);
 }
 
-ecalPh2::EcalBcpPayloadParamsHelper::EcalBcpPayloadParamsHelper(const edm::ParameterSet &config) {
+ecalph2::EcalBcpPayloadParamsHelper::EcalBcpPayloadParamsHelper(const edm::ParameterSet &config) {
   nodes_.resize(NUM_NODES);
   createFromPSet(config);
 }
 
-void ecalPh2::EcalBcpPayloadParamsHelper::createFromPSet(const edm::ParameterSet &config)
+void ecalph2::EcalBcpPayloadParamsHelper::createFromPSet(const edm::ParameterSet &config)
 {
   version_ = 1;
 
@@ -54,13 +54,13 @@ void ecalPh2::EcalBcpPayloadParamsHelper::createFromPSet(const edm::ParameterSet
 
 //////////////////////////////////////////////////////////////////////////////
 // Global parameters
-unsigned int ecalPh2::EcalBcpPayloadParamsHelper::fwVersion() const
+unsigned int ecalph2::EcalBcpPayloadParamsHelper::fwVersion() const
 {
   return nodes_[kGlobalAlgoParams].uparams_.size() > UIdx::kFwVersion
       ? nodes_[kGlobalAlgoParams].uparams_[UIdx::kFwVersion] : 0;
 }
 
-void ecalPh2::EcalBcpPayloadParamsHelper::setFwVersion(const unsigned int fwVersion)
+void ecalph2::EcalBcpPayloadParamsHelper::setFwVersion(const unsigned int fwVersion)
 {
   if (nodes_[kGlobalAlgoParams].uparams_.size() > UIdx::kFwVersion) {
     nodes_[kGlobalAlgoParams].uparams_[UIdx::kFwVersion] = fwVersion;
@@ -69,14 +69,14 @@ void ecalPh2::EcalBcpPayloadParamsHelper::setFwVersion(const unsigned int fwVers
   }
 }
 
-unsigned int ecalPh2::EcalBcpPayloadParamsHelper::sampleOfInterest(const EBDetId &detId) const
+unsigned int ecalph2::EcalBcpPayloadParamsHelper::sampleOfInterest(const EBDetId &detId) const
 {
   const auto nodesIt = crystalNodes_.find(detId.rawId());
   return nodesIt->at(kCrystalAlgoParams).uparams_.size() > UIdx::kSampleOfInterest
       ? nodesIt->at(kCrystalAlgoParams).uparams_[UIdx::kSampleOfInterest] : 0;
 }
 
-void ecalPh2::EcalBcpPayloadParamsHelper::setSampleOfInterest(const EBDetId &detId, const unsigned int soi)
+void ecalph2::EcalBcpPayloadParamsHelper::setSampleOfInterest(const EBDetId &detId, const unsigned int soi)
 {
   const auto rawId = detId.rawId();
 
@@ -93,13 +93,13 @@ void ecalPh2::EcalBcpPayloadParamsHelper::setSampleOfInterest(const EBDetId &det
 
 //////////////////////////////////////////////////////////////////////////////
 // Spike tagger LD parameters
-std::string ecalPh2::EcalBcpPayloadParamsHelper::spikeTaggerLdType() const
+std::string ecalph2::EcalBcpPayloadParamsHelper::spikeTaggerLdType() const
 {
   return nodes_[kGlobalSpikeTaggerLdParams].sparams_.size() > SIdx::kSpikeTaggerLdType
       ? nodes_[kGlobalSpikeTaggerLdParams].sparams_[SIdx::kSpikeTaggerLdType] : "";
 }
 
-void ecalPh2::EcalBcpPayloadParamsHelper::setSpikeTaggerLdType(const std::string &type)
+void ecalph2::EcalBcpPayloadParamsHelper::setSpikeTaggerLdType(const std::string &type)
 {
   if (nodes_[kGlobalSpikeTaggerLdParams].sparams_.size() > SIdx::kSpikeTaggerLdType) {
     nodes_[kGlobalSpikeTaggerLdParams].sparams_[SIdx::kSpikeTaggerLdType] = type;
@@ -108,14 +108,14 @@ void ecalPh2::EcalBcpPayloadParamsHelper::setSpikeTaggerLdType(const std::string
   }
 }
 
-double ecalPh2::EcalBcpPayloadParamsHelper::spikeTaggerLdThreshold(const EBDetId &detId) const
+double ecalph2::EcalBcpPayloadParamsHelper::spikeTaggerLdThreshold(const EBDetId &detId) const
 {
   const auto nodesIt = crystalNodes_.find(detId.rawId());
   return nodesIt->at(kCrystalSpikeTaggerLdParams).dparams_.size() > DIdx::kSpikeThreshold
       ? nodesIt->at(kCrystalSpikeTaggerLdParams).dparams_[DIdx::kSpikeThreshold] : 0.;
 }
 
-void ecalPh2::EcalBcpPayloadParamsHelper::setSpikeTaggerLdThreshold(const EBDetId &detId, const double &thr)
+void ecalph2::EcalBcpPayloadParamsHelper::setSpikeTaggerLdThreshold(const EBDetId &detId, const double &thr)
 {
   const auto rawId = detId.rawId();
 
@@ -130,13 +130,13 @@ void ecalPh2::EcalBcpPayloadParamsHelper::setSpikeTaggerLdThreshold(const EBDetI
   }
 }
 
-std::vector<double> ecalPh2::EcalBcpPayloadParamsHelper::spikeTaggerLdWeights(const EBDetId &detId) const
+std::vector<double> ecalph2::EcalBcpPayloadParamsHelper::spikeTaggerLdWeights(const EBDetId &detId) const
 {
   const auto nodesIt = crystalNodes_.find(detId.rawId());
   return nodesIt->at(kCrystalSpikeTaggerLdWeights).dparams_;
 }
 
-void ecalPh2::EcalBcpPayloadParamsHelper::setSpikeTaggerLdWeights(const EBDetId &detId, const std::vector<double> &weights)
+void ecalph2::EcalBcpPayloadParamsHelper::setSpikeTaggerLdWeights(const EBDetId &detId, const std::vector<double> &weights)
 {
   const auto rawId = detId.rawId();
 
@@ -149,13 +149,13 @@ void ecalPh2::EcalBcpPayloadParamsHelper::setSpikeTaggerLdWeights(const EBDetId 
 
 //////////////////////////////////////////////////////////////////////////////
 // TP clustering algo parameters
-std::string ecalPh2::EcalBcpPayloadParamsHelper::tpClusterAlgoType() const
+std::string ecalph2::EcalBcpPayloadParamsHelper::tpClusterAlgoType() const
 {
   return nodes_[kGlobalTpClusterAlgoParams].sparams_.size() > SIdx::kTpClusterAlgoType
       ? nodes_[kGlobalTpClusterAlgoParams].sparams_[SIdx::kTpClusterAlgoType] : "";
 }
 
-void ecalPh2::EcalBcpPayloadParamsHelper::setTpClusterAlgoType(const std::string &type)
+void ecalph2::EcalBcpPayloadParamsHelper::setTpClusterAlgoType(const std::string &type)
 {
   if (nodes_[kGlobalTpClusterAlgoParams].sparams_.size() > SIdx::kTpClusterAlgoType) {
     nodes_[kGlobalTpClusterAlgoParams].sparams_[SIdx::kTpClusterAlgoType] = type;
@@ -165,7 +165,7 @@ void ecalPh2::EcalBcpPayloadParamsHelper::setTpClusterAlgoType(const std::string
 }
 
 // print parameters to stream:
-void ecalPh2::EcalBcpPayloadParamsHelper::print(std::ostream &out) const
+void ecalph2::EcalBcpPayloadParamsHelper::print(std::ostream &out) const
 {
   out << "ECAL BCP payload parameters" << std::endl;
   out << "Parameter version 0x" << std::hex << version_ << std::dec << std::endl;
@@ -184,13 +184,13 @@ void ecalPh2::EcalBcpPayloadParamsHelper::print(std::ostream &out) const
   out << "  Type " << this->tpClusterAlgoType() << std::endl;
 }
 
-std::ostream & operator<<(std::ostream &out, const ecalPh2::EcalBcpPayloadParamsHelper &params)
+std::ostream & operator<<(std::ostream &out, const ecalph2::EcalBcpPayloadParamsHelper &params)
 {
   params.print(out);
   return out;
 }
 
-void ecalPh2::EcalBcpPayloadParamsHelper::setSamplesOfInterest(const std::vector<edm::ParameterSet> &pSets)
+void ecalph2::EcalBcpPayloadParamsHelper::setSamplesOfInterest(const std::vector<edm::ParameterSet> &pSets)
 {
   for (const auto &pSet : pSets) {
     int ietaMin, ietaMax;
@@ -210,7 +210,7 @@ void ecalPh2::EcalBcpPayloadParamsHelper::setSamplesOfInterest(const std::vector
   }
 }
 
-void ecalPh2::EcalBcpPayloadParamsHelper::setPerCrystalSpikeTaggerParams(const std::vector<edm::ParameterSet> &pSets)
+void ecalph2::EcalBcpPayloadParamsHelper::setPerCrystalSpikeTaggerParams(const std::vector<edm::ParameterSet> &pSets)
 {
   for (const auto &pSet : pSets) {
     int ietaMin, ietaMax;
@@ -231,7 +231,7 @@ void ecalPh2::EcalBcpPayloadParamsHelper::setPerCrystalSpikeTaggerParams(const s
   }
 }
 
-void ecalPh2::EcalBcpPayloadParamsHelper::parseCrystalRange(const std::string &rangeStr, int &iMin, int &iMax, const bool isEta)
+void ecalph2::EcalBcpPayloadParamsHelper::parseCrystalRange(const std::string &rangeStr, int &iMin, int &iMax, const bool isEta)
 {
   const auto divPos = rangeStr.find(":");
   const auto minStr = rangeStr.substr(0, divPos);

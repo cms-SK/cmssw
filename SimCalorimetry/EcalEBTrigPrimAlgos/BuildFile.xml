@@ -1,8 +1,8 @@
-<<<<<<< HEAD
 <use name="DataFormats/EcalDigi"/>
 <use name="DataFormats/EcalDetId"/>
 <use name="CondFormats/EcalObjects"/>
 <use name="CondFormats/DataRecord"/>
+<use name="FWCore/ParameterSet"/>
 <use name="Geometry/CaloTopology"/>
 <use name="Geometry/CaloGeometry"/>
 <use name="Geometry/Records"/>
@@ -11,3 +11,6 @@
 <use name="hls"/>
 <use name="EbSpikeTaggerHLS"/>
 <use name="EbSwissCrossHLS"/>
+<export>
+  <lib name="1"/>
+</export>

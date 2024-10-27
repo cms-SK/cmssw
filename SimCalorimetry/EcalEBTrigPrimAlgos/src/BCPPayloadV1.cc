@@ -1,5 +1,5 @@
 ///
-/// \class ecalPh2::BCPPayloadV1
+/// \class ecalph2::BCPPayloadV1
 ///
 /// \author: Thomas Reis
 ///
@@ -16,7 +16,7 @@
 #include "SimCalorimetry/EcalEBTrigPrimAlgos/interface/SpikeTaggerLDAlgoFactory.h"
 #include "SimCalorimetry/EcalEBTrigPrimAlgos/interface/TPClusterAlgoFactory.h"
 
-void ecalPh2::BCPPayloadV1::processEvent(const EBDigiCollection &ebDigis, EcalEBTrigPrimDigiCollection &ebTPs, std::vector<EcalEBTriggerPrimitiveCluster> &ebTPClusters)
+void ecalph2::BCPPayloadV1::processEvent(const EBDigiCollection &ebDigis, EcalEBTrigPrimDigiCollection &ebTPs, std::vector<EcalEBTriggerPrimitiveCluster> &ebTPClusters)
 {
   std::cout << "Processing BCPPayloadV1" << std::endl;
   multiFitTimingAlgo_->processEvent(ebDigis, ebTPs);
@@ -24,11 +24,11 @@ void ecalPh2::BCPPayloadV1::processEvent(const EBDigiCollection &ebDigis, EcalEB
   tpClusterAlgo_->processEvent(ebTPs, ebTPClusters);
 }
 
-void ecalPh2::BCPPayloadV1::createAlgos(const edm::EventSetup &eventSetup)
+void ecalph2::BCPPayloadV1::createAlgos(const edm::EventSetup &eventSetup)
 {
-  ecalPh2::MultiFitTimingAlgoFactory multiFitTimingAlgoFactory;
-  ecalPh2::SpikeTaggerLDAlgoFactory spikeTaggerLDAlgoFactory;
-  ecalPh2::TPClusterAlgoFactory tpClusterAlgoFactory;
+  ecalph2::MultiFitTimingAlgoFactory multiFitTimingAlgoFactory;
+  ecalph2::SpikeTaggerLDAlgoFactory spikeTaggerLDAlgoFactory;
+  ecalph2::TPClusterAlgoFactory tpClusterAlgoFactory;
 
   multiFitTimingAlgo_ = multiFitTimingAlgoFactory.create(ecalBcpPayloadParamsHelper_, eventSetup);
   spikeTaggerLDAlgo_ = spikeTaggerLDAlgoFactory.create(ecalBcpPayloadParamsHelper_, eventSetup);

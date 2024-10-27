@@ -1,5 +1,5 @@
 ///
-/// \class ecalPh2::SpikeTaggerLDHLSAlgoV1
+/// \class ecalph2::SpikeTaggerLDHLSAlgoV1
 ///
 /// \author: Thomas Reis
 /// 
@@ -17,13 +17,13 @@
 #include "SimCalorimetry/EcalEBTrigPrimAlgos/interface/EcalBcpPayloadParamsHelper.h"
 #include "SimCalorimetry/EcalEBTrigPrimAlgos/interface/SpikeTaggerLDHLSAlgoV1.h"
 
-using namespace ecalPh2::hls::bcpspiketagger;
+using namespace ecalph2::hls::bcpspiketagger;
 
-ecalPh2::SpikeTaggerLDHLSAlgoV1::SpikeTaggerLDHLSAlgoV1(const std::shared_ptr<ecalPh2::EcalBcpPayloadParamsHelper> ecalBcpPayloadParamsHelper, const edm::EventSetup &eventSetup) : SpikeTaggerLDAlgo(ecalBcpPayloadParamsHelper, eventSetup)
+ecalph2::SpikeTaggerLDHLSAlgoV1::SpikeTaggerLDHLSAlgoV1(const std::shared_ptr<ecalph2::EcalBcpPayloadParamsHelper> ecalBcpPayloadParamsHelper, const edm::EventSetup &eventSetup) : SpikeTaggerLDAlgo(ecalBcpPayloadParamsHelper, eventSetup)
 {
 }
 
-void ecalPh2::SpikeTaggerLDHLSAlgoV1::processEvent(const EBDigiCollection &ebDigis, EcalEBTrigPrimDigiCollection &ebTPs)
+void ecalph2::SpikeTaggerLDHLSAlgoV1::processEvent(const EBDigiCollection &ebDigis, EcalEBTrigPrimDigiCollection &ebTPs)
 {
   std::cout << "Processing SpikeTaggerLDHLSAlgoV1" << std::endl;
   // do not run if there are no inputs
@@ -34,7 +34,7 @@ void ecalPh2::SpikeTaggerLDHLSAlgoV1::processEvent(const EBDigiCollection &ebDig
     std::cout << "This frame has size: " << ebDigis.size() << std::endl;
   }
 
-  // Since one FPGA handles 300 channels (ecalPh2::hls::bcpspiketagger::nchannels)
+  // Since one FPGA handles 300 channels (ecalph2::hls::bcpspiketagger::nchannels)
   // the HLS findSpikes function expects samples from as many channels each
   // clock cycle. Three arrays are filled with samples from channels as they
   // are in the ebDigis and once 300 channels are reached the findSpikes function is called.
@@ -70,7 +70,7 @@ void ecalPh2::SpikeTaggerLDHLSAlgoV1::processEvent(const EBDigiCollection &ebDig
     // Run the HLS findSpikes function.
     // After three calls of the function the output contains the spike flag calculated from the three samples.
     std::array<output::outdata, nchannels> sfOutput;
-    for (const auto samples : samplesArray) {
+    for (const auto& samples : samplesArray) {
       std::cout << "running the HLS spike tagger algo" << std::endl;
       sfOutput = findSpikes(samples);
     }

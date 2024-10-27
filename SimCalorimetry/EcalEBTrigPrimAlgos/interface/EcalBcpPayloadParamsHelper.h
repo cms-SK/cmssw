@@ -8,7 +8,7 @@
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 #include "CondFormats/EcalObjects/interface/EcalBcpPayloadParams.h"
 
-namespace ecalPh2 {
+namespace ecalph2 {
 
 class EcalBcpPayloadParamsHelper : public EcalBcpPayloadParams {
  public:
@@ -74,5 +74,5 @@ class EcalBcpPayloadParamsHelper : public EcalBcpPayloadParams {
   void parseCrystalRange(const std::string &rangeStr, int &iMin, int &iMax, const bool isEta = true);
 };
 
-} // namespace ecalPh2
+} // namespace ecalph2
 #endif

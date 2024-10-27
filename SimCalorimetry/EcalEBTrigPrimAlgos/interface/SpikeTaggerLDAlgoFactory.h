@@ -6,7 +6,7 @@
 #include "SimCalorimetry/EcalEBTrigPrimAlgos/interface/EcalBcpPayloadParamsHelper.h"
 #include "SimCalorimetry/EcalEBTrigPrimAlgos/interface/SpikeTaggerLDAlgo.h"
 
-namespace ecalPh2 {
+namespace ecalph2 {
 
 class SpikeTaggerLDAlgoFactory {
  public:
@@ -15,8 +15,8 @@ class SpikeTaggerLDAlgoFactory {
 
   typedef std::unique_ptr<SpikeTaggerLDAlgo> ReturnType;
 
-  ReturnType create(const std::shared_ptr<ecalPh2::EcalBcpPayloadParamsHelper> ecalBcpPayloadParamsHelper, const edm::EventSetup &eventSetup);
+  ReturnType create(const std::shared_ptr<ecalph2::EcalBcpPayloadParamsHelper> ecalBcpPayloadParamsHelper, const edm::EventSetup &eventSetup);
 };
 
-} // namespace ecalPh2
+} // namespace ecalph2
 #endif

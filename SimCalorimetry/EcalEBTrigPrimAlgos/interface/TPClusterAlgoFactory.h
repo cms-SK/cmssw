@@ -6,7 +6,7 @@
 #include "SimCalorimetry/EcalEBTrigPrimAlgos/interface/EcalBcpPayloadParamsHelper.h"
 #include "SimCalorimetry/EcalEBTrigPrimAlgos/interface/TPClusterAlgo.h"
 
-namespace ecalPh2 {
+namespace ecalph2 {
 
 class TPClusterAlgoFactory {
  public:
@@ -15,8 +15,8 @@ class TPClusterAlgoFactory {
 
   typedef std::unique_ptr<TPClusterAlgo> ReturnType;
 
-  ReturnType create(const std::shared_ptr<ecalPh2::EcalBcpPayloadParamsHelper> ecalBcpPayloadParamsHelper);
+  ReturnType create(const std::shared_ptr<ecalph2::EcalBcpPayloadParamsHelper> ecalBcpPayloadParamsHelper);
 };
 
-} // namespace ecalPh2
+} // namespace ecalph2
 #endif

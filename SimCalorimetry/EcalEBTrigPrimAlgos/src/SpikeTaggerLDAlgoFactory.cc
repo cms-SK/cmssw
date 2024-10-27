@@ -1,5 +1,5 @@
 ///
-/// \class ecalPh2::SpikeTaggerLDAlgoFactory
+/// \class ecalph2::SpikeTaggerLDAlgoFactory
 ///
 /// \author: Thomas Reis
 ///
@@ -19,7 +19,7 @@
 #include "SimCalorimetry/EcalEBTrigPrimAlgos/interface/SpikeTaggerLDHLSAlgoV1.h"
 #include "SimCalorimetry/EcalEBTrigPrimAlgos/interface/SpikeTaggerLDIdealAlgoV1.h"
 
-ecalPh2::SpikeTaggerLDAlgoFactory::ReturnType ecalPh2::SpikeTaggerLDAlgoFactory::create(const std::shared_ptr<ecalPh2::EcalBcpPayloadParamsHelper> ecalBcpPayloadParamsHelper, const edm::EventSetup &eventSetup)
+ecalph2::SpikeTaggerLDAlgoFactory::ReturnType ecalph2::SpikeTaggerLDAlgoFactory::create(const std::shared_ptr<ecalph2::EcalBcpPayloadParamsHelper> ecalBcpPayloadParamsHelper, const edm::EventSetup &eventSetup)
 {
   ReturnType spikeTaggerLDAlgo;
 
@@ -34,20 +34,20 @@ ecalPh2::SpikeTaggerLDAlgoFactory::ReturnType ecalPh2::SpikeTaggerLDAlgoFactory:
   // factory
   if (algoType == "ideal") {
     if (fwVersion >= 1) {
-      edm::LogInfo("ecalPh2::SpikeTaggerLDAlgoFactory") << "Creating ideal spike tagger LD algo for FW version " << fwStr;
-      spikeTaggerLDAlgo = std::make_unique<ecalPh2::SpikeTaggerLDIdealAlgoV1>(ecalBcpPayloadParamsHelper, eventSetup);
+      edm::LogInfo("ecalph2::SpikeTaggerLDAlgoFactory") << "Creating ideal spike tagger LD algo for FW version " << fwStr;
+      spikeTaggerLDAlgo = std::make_unique<ecalph2::SpikeTaggerLDIdealAlgoV1>(ecalBcpPayloadParamsHelper, eventSetup);
     } else {
-      edm::LogError("ecalPh2::SpikeTaggerLDAlgoFactory") << "No ideal spike tagger LD algo to create for FW version " << fwStr;
+      edm::LogError("ecalph2::SpikeTaggerLDAlgoFactory") << "No ideal spike tagger LD algo to create for FW version " << fwStr;
     }
   } else if (algoType == "hls") {
     if (fwVersion >= 1) {
-      edm::LogInfo("ecalPh2::SpikeTaggerLDAlgoFactory") << "Creating HLS spike tagger LD algo for FW version " << fwStr;
-      spikeTaggerLDAlgo = std::make_unique<ecalPh2::SpikeTaggerLDHLSAlgoV1>(ecalBcpPayloadParamsHelper, eventSetup);
+      edm::LogInfo("ecalph2::SpikeTaggerLDAlgoFactory") << "Creating HLS spike tagger LD algo for FW version " << fwStr;
+      spikeTaggerLDAlgo = std::make_unique<ecalph2::SpikeTaggerLDHLSAlgoV1>(ecalBcpPayloadParamsHelper, eventSetup);
     } else {
-      edm::LogError("ecalPh2::SpikeTaggerLDAlgoFactory") << "No HLS spike tagger LD algo to create for FW version " << fwStr;
+      edm::LogError("ecalph2::SpikeTaggerLDAlgoFactory") << "No HLS spike tagger LD algo to create for FW version " << fwStr;
     }
   } else {
-    edm::LogError("ecalPh2::SpikeTaggerLDAlgoFactory") << "Unknown spike tagger LD algo type '" << algoType << "'";
+    edm::LogError("ecalph2::SpikeTaggerLDAlgoFactory") << "Unknown spike tagger LD algo type '" << algoType << "'";
   }
 
   return spikeTaggerLDAlgo;

@@ -5,11 +5,11 @@
 #include "DataFormats/EcalDigi/interface/EcalEBTriggerPrimitiveCluster.h"
 #include "SimCalorimetry/EcalEBTrigPrimAlgos/interface/EcalBcpPayloadParamsHelper.h"
 
-namespace ecalPh2 {
+namespace ecalph2 {
 
 class TPClusterAlgo {
  public:
-  TPClusterAlgo(const std::shared_ptr<ecalPh2::EcalBcpPayloadParamsHelper> ecalBcpPayloadParamsHelper) : ecalBcpPayloadParamsHelper_(ecalBcpPayloadParamsHelper) {};
+  TPClusterAlgo(const std::shared_ptr<ecalph2::EcalBcpPayloadParamsHelper> ecalBcpPayloadParamsHelper) : ecalBcpPayloadParamsHelper_(ecalBcpPayloadParamsHelper) {};
   virtual ~TPClusterAlgo() {};
 
   virtual void processEvent(const EcalEBTrigPrimDigiCollection &ebTPs, std::vector<EcalEBTriggerPrimitiveCluster> &ebTPClusters) = 0;
@@ -19,5 +19,5 @@ class TPClusterAlgo {
   const std::shared_ptr<EcalBcpPayloadParamsHelper> ecalBcpPayloadParamsHelper_;
 };
 
-} // namespace ecalPh2
+} // namespace ecalph2
 #endif

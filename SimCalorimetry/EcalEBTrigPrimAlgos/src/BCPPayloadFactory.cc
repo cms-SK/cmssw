@@ -1,5 +1,5 @@
 ///
-/// \class ecalPh2::BCPPayloadFactory
+/// \class ecalph2::BCPPayloadFactory
 ///
 /// \author: Thomas Reis
 ///
@@ -17,7 +17,7 @@
 #include "SimCalorimetry/EcalEBTrigPrimAlgos/interface/BCPPayloadFactory.h"
 #include "SimCalorimetry/EcalEBTrigPrimAlgos/interface/BCPPayloadV1.h"
 
-ecalPh2::BCPPayloadFactory::ReturnType ecalPh2::BCPPayloadFactory::create(const std::shared_ptr<ecalPh2::EcalBcpPayloadParamsHelper> ecalBcpPayloadParamsHelper, const edm::EventSetup &eventSetup)
+ecalph2::BCPPayloadFactory::ReturnType ecalph2::BCPPayloadFactory::create(const std::shared_ptr<ecalph2::EcalBcpPayloadParamsHelper> ecalBcpPayloadParamsHelper, const edm::EventSetup &eventSetup)
 {
   const auto fwVersion = ecalBcpPayloadParamsHelper->fwVersion();
 
@@ -29,10 +29,10 @@ ecalPh2::BCPPayloadFactory::ReturnType ecalPh2::BCPPayloadFactory::create(const 
   // create payload
   ReturnType payload;
   if (fwVersion >= 1) {
-    edm::LogInfo("ecalPh2::BCPPayloadFactory") << "Creating BCP payload for FW version " << fwStr;
-    payload = std::make_unique<ecalPh2::BCPPayloadV1>(ecalBcpPayloadParamsHelper, eventSetup);
+    edm::LogInfo("ecalph2::BCPPayloadFactory") << "Creating BCP payload for FW version " << fwStr;
+    payload = std::make_unique<ecalph2::BCPPayloadV1>(ecalBcpPayloadParamsHelper, eventSetup);
   } else {
-    edm::LogError("ecalPh2::BCPPayloadFactory") << "No BCP payload to create for FW version " << fwStr;
+    edm::LogError("ecalph2::BCPPayloadFactory") << "No BCP payload to create for FW version " << fwStr;
   }
 
   return payload;

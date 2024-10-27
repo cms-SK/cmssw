@@ -37,7 +37,7 @@
 class EcalBcpPayloadParamsESProducer : public edm::ESProducer {
  public:
   EcalBcpPayloadParamsESProducer(const edm::ParameterSet&);
-  ~EcalBcpPayloadParamsESProducer();
+  ~EcalBcpPayloadParamsESProducer() override;
 
   using ReturnType = std::unique_ptr<EcalBcpPayloadParams>;
 
@@ -53,7 +53,7 @@ EcalBcpPayloadParamsESProducer::EcalBcpPayloadParamsESProducer(const edm::Parame
 {
   setWhatProduced(this);
 
-  ecalPh2::EcalBcpPayloadParamsHelper paramsHelper(iConfig);
+  ecalph2::EcalBcpPayloadParamsHelper paramsHelper(iConfig);
   params_ = static_cast<EcalBcpPayloadParams>(paramsHelper);
 }
 

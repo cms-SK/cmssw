@@ -1,5 +1,5 @@
 ///
-/// \class ecalPh2::TPClusterAlgoV1
+/// \class ecalph2::TPClusterAlgoV1
 ///
 /// \author: Thomas Reis
 /// 
@@ -17,7 +17,7 @@
 #include "SimCalorimetry/EcalEBTrigPrimAlgos/interface/EcalBcpPayloadParamsHelper.h"
 #include "SimCalorimetry/EcalEBTrigPrimAlgos/interface/TPClusterAlgoV1.h"
 
-ecalPh2::TPClusterAlgoV1::TPClusterAlgoV1(const std::shared_ptr<ecalPh2::EcalBcpPayloadParamsHelper> ecalBcpPayloadParamsHelper) :
+ecalph2::TPClusterAlgoV1::TPClusterAlgoV1(const std::shared_ptr<ecalph2::EcalBcpPayloadParamsHelper> ecalBcpPayloadParamsHelper) :
   TPClusterAlgo(ecalBcpPayloadParamsHelper),
   doCluster_(true),
   doSwissCross_(true),
@@ -36,7 +36,7 @@ ecalPh2::TPClusterAlgoV1::TPClusterAlgoV1(const std::shared_ptr<ecalPh2::EcalBcp
   nTPInCluster_ = (2 * iEtaDiffMax_ + 1) * (2 * iPhiDiffMax_ + 1);
 }
 
-void ecalPh2::TPClusterAlgoV1::processEvent(const EcalEBTrigPrimDigiCollection &ebTPs, std::vector<EcalEBTriggerPrimitiveCluster> &ebTPClusters)
+void ecalph2::TPClusterAlgoV1::processEvent(const EcalEBTrigPrimDigiCollection &ebTPs, std::vector<EcalEBTriggerPrimitiveCluster> &ebTPClusters)
 {
   std::cout << "Processing TPClusterAlgoV1" << std::endl;
   std::cout << "This TP collection has size: " << ebTPs.size() << std::endl;

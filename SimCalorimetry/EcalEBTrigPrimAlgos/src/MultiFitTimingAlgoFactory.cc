@@ -1,5 +1,5 @@
 ///
-/// \class ecalPh2::MultiFitTimingAlgoFactory
+/// \class ecalph2::MultiFitTimingAlgoFactory
 ///
 /// \author: Thomas Reis
 ///
@@ -20,7 +20,7 @@
 
 #include "SimCalorimetry/EcalEBTrigPrimAlgos/interface/MultiFitTimingAlgoV1.h"
 
-ecalPh2::MultiFitTimingAlgoFactory::ReturnType ecalPh2::MultiFitTimingAlgoFactory::create(const std::shared_ptr<ecalPh2::EcalBcpPayloadParamsHelper> ecalBcpPayloadParamsHelper, const edm::EventSetup &eventSetup)
+ecalph2::MultiFitTimingAlgoFactory::ReturnType ecalph2::MultiFitTimingAlgoFactory::create(const std::shared_ptr<ecalph2::EcalBcpPayloadParamsHelper> ecalBcpPayloadParamsHelper, const edm::EventSetup &eventSetup)
 {
   ReturnType multiFitTimingAlgo;
 
@@ -36,13 +36,13 @@ ecalPh2::MultiFitTimingAlgoFactory::ReturnType ecalPh2::MultiFitTimingAlgoFactor
   // factory
   if (algoType == "dummy") {
     if (fwVersion >= 1) {
-      edm::LogInfo("ecalPh2::MultiFitTimingAlgoFactory") << "Creating multifit timing algo for FW version " << fwStr;
-      multiFitTimingAlgo = std::make_unique<ecalPh2::MultiFitTimingAlgoV1>(ecalBcpPayloadParamsHelper, eventSetup);
+      edm::LogInfo("ecalph2::MultiFitTimingAlgoFactory") << "Creating multifit timing algo for FW version " << fwStr;
+      multiFitTimingAlgo = std::make_unique<ecalph2::MultiFitTimingAlgoV1>(ecalBcpPayloadParamsHelper, eventSetup);
     } else {
-      edm::LogError("ecalPh2::MultiFitTimingAlgoFactory") << "No multifit timing algo to create for FW version " << fwStr;
+      edm::LogError("ecalph2::MultiFitTimingAlgoFactory") << "No multifit timing algo to create for FW version " << fwStr;
     }
   } else {
-    edm::LogError("ecalPh2::MultiFitTimingAlgoFactory") << "Unknown multifit timing algo type '" << algoType << "'";
+    edm::LogError("ecalph2::MultiFitTimingAlgoFactory") << "Unknown multifit timing algo type '" << algoType << "'";
   }
 
   return multiFitTimingAlgo;

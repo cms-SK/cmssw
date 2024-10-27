@@ -7,11 +7,11 @@
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 #include "SimCalorimetry/EcalEBTrigPrimAlgos/interface/SpikeTaggerLDAlgo.h"
 
-namespace ecalPh2 {
+namespace ecalph2 {
 
 class SpikeTaggerLDIdealAlgoV1 : public SpikeTaggerLDAlgo {
  public:
-  SpikeTaggerLDIdealAlgoV1(const std::shared_ptr<ecalPh2::EcalBcpPayloadParamsHelper> ecalBcpPayloadParamsHelper, const edm::EventSetup &eventSetup);
+  SpikeTaggerLDIdealAlgoV1(const std::shared_ptr<ecalph2::EcalBcpPayloadParamsHelper> ecalBcpPayloadParamsHelper, const edm::EventSetup &eventSetup);
   ~SpikeTaggerLDIdealAlgoV1() override {};
 
   void processEvent(const EBDigiCollection &ebDigis, EcalEBTrigPrimDigiCollection &ebTPs) override;
@@ -31,5 +31,5 @@ class SpikeTaggerLDIdealAlgoV1 : public SpikeTaggerLDAlgo {
   float calcRMinus1Poly(const EBDataFrame &frame) const;
 };
 
-} // namespace ecalPh2
+} // namespace ecalph2
 #endif

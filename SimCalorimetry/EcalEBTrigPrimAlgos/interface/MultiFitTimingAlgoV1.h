@@ -7,11 +7,11 @@
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 #include "SimCalorimetry/EcalEBTrigPrimAlgos/interface/MultiFitTimingAlgo.h"
 
-namespace ecalPh2 {
+namespace ecalph2 {
 
 class MultiFitTimingAlgoV1 : public MultiFitTimingAlgo {
  public:
-  MultiFitTimingAlgoV1(const std::shared_ptr<ecalPh2::EcalBcpPayloadParamsHelper> ecalBcpPayloadParamsHelper, const edm::EventSetup &eventSetup);
+  MultiFitTimingAlgoV1(const std::shared_ptr<ecalph2::EcalBcpPayloadParamsHelper> ecalBcpPayloadParamsHelper, const edm::EventSetup &eventSetup);
   ~MultiFitTimingAlgoV1() override {};
 
   void processEvent(const EBDigiCollection &ebDigis, EcalEBTrigPrimDigiCollection &ebTPs) override;
@@ -22,5 +22,5 @@ class MultiFitTimingAlgoV1 : public MultiFitTimingAlgo {
   std::array<float, 4> gains_;
 };
 
-} // namespace ecalPh2
+} // namespace ecalph2
 #endif

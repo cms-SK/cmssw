@@ -65,8 +65,8 @@ class EcalBarrelTPProducer : public edm::stream::EDProducer<> {
   edm::EDPutTokenT<EcalEBTrigPrimDigiCollection> ebTPToken_;
   edm::EDPutTokenT<EcalEBTriggerPrimitiveClusterCollection> ebTPClusterToken_;
 
-  std::shared_ptr<ecalPh2::EcalBcpPayloadParamsHelper> ecalBcpPayloadParamsHelper_;
-  std::unique_ptr<ecalPh2::BCPPayload> payload_;
+  std::shared_ptr<ecalph2::EcalBcpPayloadParamsHelper> ecalBcpPayloadParamsHelper_;
+  std::unique_ptr<ecalph2::BCPPayload> payload_;
 };
 
 //
@@ -75,7 +75,7 @@ class EcalBarrelTPProducer : public edm::stream::EDProducer<> {
 EcalBarrelTPProducer::EcalBarrelTPProducer(const edm::ParameterSet& iConfig) :
   config_(iConfig),
   fwVersion_(0),
-  esEbPayloadParamsToken_(esConsumes<EcalBcpPayloadParams, EcalBcpPayloadParamsRcd, edm::Transition::BeginRun>()),
+  esEbPayloadParamsToken_(esConsumes<edm::Transition::BeginRun>()),
   ebDigiToken_(consumes<EBDigiCollection>(iConfig.getParameter<edm::InputTag>("barrelEcalDigis"))),
   ebTPToken_(produces<EcalEBTrigPrimDigiCollection>()),
   ebTPClusterToken_(produces<EcalEBTriggerPrimitiveClusterCollection>())
@@ -138,9 +138,9 @@ EcalBarrelTPProducer::beginRun(edm::Run const&, edm::EventSetup const &eventSetu
   const auto configSource = config_.getParameter<std::string>("configSource");
   if (configSource == "fromES") {
     const auto &esParams = eventSetup.getData(esEbPayloadParamsToken_);
-    ecalBcpPayloadParamsHelper_ = std::make_shared<ecalPh2::EcalBcpPayloadParamsHelper>(esParams);
+    ecalBcpPayloadParamsHelper_ = std::make_shared<ecalph2::EcalBcpPayloadParamsHelper>(esParams);
   } else if (configSource == "fromModuleConfig") {
-    ecalBcpPayloadParamsHelper_ = std::make_shared<ecalPh2::EcalBcpPayloadParamsHelper>(config_);
+    ecalBcpPayloadParamsHelper_ = std::make_shared<ecalph2::EcalBcpPayloadParamsHelper>(config_);
   } else {
     edm::LogError("EcalBarrelTPProducer") << "Unknown configuration source '" << configSource << "'";
   }
@@ -151,7 +151,7 @@ EcalBarrelTPProducer::beginRun(edm::Run const&, edm::EventSetup const &eventSetu
     fwVersion_ = newFwVersion;
 
     // build payload depending on current FW version
-    ecalPh2::BCPPayloadFactory factory;
+    ecalph2::BCPPayloadFactory factory;
     payload_ = factory.create(ecalBcpPayloadParamsHelper_, eventSetup);
   }
 }

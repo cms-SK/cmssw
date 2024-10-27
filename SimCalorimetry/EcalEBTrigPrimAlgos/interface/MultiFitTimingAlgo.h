@@ -5,11 +5,11 @@
 #include "DataFormats/EcalDigi/interface/EcalDigiCollections.h"
 #include "SimCalorimetry/EcalEBTrigPrimAlgos/interface/EcalBcpPayloadParamsHelper.h"
 
-namespace ecalPh2 {
+namespace ecalph2 {
 
 class MultiFitTimingAlgo {
  public:
-  MultiFitTimingAlgo(const std::shared_ptr<ecalPh2::EcalBcpPayloadParamsHelper> ecalBcpPayloadParamsHelper, const edm::EventSetup &eventSetup) : ecalBcpPayloadParamsHelper_(ecalBcpPayloadParamsHelper) {};
+  MultiFitTimingAlgo(const std::shared_ptr<ecalph2::EcalBcpPayloadParamsHelper> ecalBcpPayloadParamsHelper, const edm::EventSetup &eventSetup) : ecalBcpPayloadParamsHelper_(ecalBcpPayloadParamsHelper) {};
   virtual ~MultiFitTimingAlgo() {};
 
   virtual void processEvent(const EBDigiCollection &ebDigis, EcalEBTrigPrimDigiCollection &ebTPs) = 0;
@@ -19,5 +19,5 @@ class MultiFitTimingAlgo {
   const std::shared_ptr<EcalBcpPayloadParamsHelper> ecalBcpPayloadParamsHelper_;
 };
 
-} // namespace ecalPh2
+} // namespace ecalph2
 #endif

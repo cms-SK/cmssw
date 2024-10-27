@@ -1,5 +1,5 @@
 ///
-/// \class ecalPh2::TPClusterHLSAlgoV1
+/// \class ecalph2::TPClusterHLSAlgoV1
 ///
 /// \author: Thomas Reis
 /// 
@@ -17,19 +17,19 @@
 #include "SimCalorimetry/EcalEBTrigPrimAlgos/interface/EcalBcpPayloadParamsHelper.h"
 #include "SimCalorimetry/EcalEBTrigPrimAlgos/interface/TPClusterHLSAlgoV1.h"
 
-using namespace ecalPh2::hls::bcpswisscross;
+using namespace ecalph2::hls::bcpswisscross;
 
-ecalPh2::TPClusterHLSAlgoV1::TPClusterHLSAlgoV1(const std::shared_ptr<ecalPh2::EcalBcpPayloadParamsHelper> ecalBcpPayloadParamsHelper) : TPClusterAlgo(ecalBcpPayloadParamsHelper)
+ecalph2::TPClusterHLSAlgoV1::TPClusterHLSAlgoV1(const std::shared_ptr<ecalph2::EcalBcpPayloadParamsHelper> ecalBcpPayloadParamsHelper) : TPClusterAlgo(ecalBcpPayloadParamsHelper)
 {
 }
 
-void ecalPh2::TPClusterHLSAlgoV1::processEvent(const EcalEBTrigPrimDigiCollection &ebTPs, std::vector<EcalEBTriggerPrimitiveCluster> &ebTPClusters)
+void ecalph2::TPClusterHLSAlgoV1::processEvent(const EcalEBTrigPrimDigiCollection &ebTPs, std::vector<EcalEBTriggerPrimitiveCluster> &ebTPClusters)
 {
   std::cout << "Processing TPClusterHLSAlgoV1" << std::endl;
   std::cout << "This TP collection has size: " << ebTPs.size() << std::endl;
 
   // Since one FPGA handles 300 channels
-  // (ecalPh2::hls::bcpswisscross::nchannels_eta * ecalPh2::hls::bcpswisscross::nchannels_phi)
+  // (ecalph2::hls::bcpswisscross::nchannels_eta * ecalph2::hls::bcpswisscross::nchannels_phi)
   // the HLS swissCross function expects TPs from as many channels.
   // In addition TPs from the surrounding FPGAs are expected as well.
   std::array<std::array<input::indata, nchannels_phi>, nchannels_eta> data;
@@ -81,7 +81,7 @@ void ecalPh2::TPClusterHLSAlgoV1::processEvent(const EcalEBTrigPrimDigiCollectio
     scOutput = swissCross(data, data_etap, data_etam, data_phip, data_phim);
 
     // setting the TPClusters
-    for (const auto scCluster : scOutput) {
+    for (const auto& scCluster : scOutput) {
       if (scCluster.et > 0 || scCluster.spike) {
         std::cout << "Adding TP cluster et=" << scCluster.et << ", ieta=" << scCluster.eta << ", iphi=" << scCluster.phi << ", number of crystals=" << scCluster.ncrystals << ", spike=" << scCluster.spike << std::endl;
         ebTPClusters.emplace_back(EcalEBTriggerPrimitiveCluster(scCluster.et, scCluster.time, scCluster.eta, scCluster.phi, scCluster.ncrystals, scCluster.spike));

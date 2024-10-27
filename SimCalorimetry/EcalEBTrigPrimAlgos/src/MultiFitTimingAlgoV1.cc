@@ -1,5 +1,5 @@
 ///
-/// \class ecalPh2::MultiFitTimingAlgoV1
+/// \class ecalph2::MultiFitTimingAlgoV1
 ///
 /// \author: Thomas Reis
 /// 
@@ -15,11 +15,11 @@
 #include "SimCalorimetry/EcalEBTrigPrimAlgos/interface/EcalBcpPayloadParamsHelper.h"
 #include "SimCalorimetry/EcalEBTrigPrimAlgos/interface/MultiFitTimingAlgoV1.h"
 
-ecalPh2::MultiFitTimingAlgoV1::MultiFitTimingAlgoV1(const std::shared_ptr<ecalPh2::EcalBcpPayloadParamsHelper> ecalBcpPayloadParamsHelper, const edm::EventSetup &eventSetup) : MultiFitTimingAlgo(ecalBcpPayloadParamsHelper, eventSetup)
+ecalph2::MultiFitTimingAlgoV1::MultiFitTimingAlgoV1(const std::shared_ptr<ecalph2::EcalBcpPayloadParamsHelper> ecalBcpPayloadParamsHelper, const edm::EventSetup &eventSetup) : MultiFitTimingAlgo(ecalBcpPayloadParamsHelper, eventSetup)
 {
 }
 
-void ecalPh2::MultiFitTimingAlgoV1::processEvent(const EBDigiCollection &ebDigis, EcalEBTrigPrimDigiCollection &ebTPs)
+void ecalph2::MultiFitTimingAlgoV1::processEvent(const EBDigiCollection &ebDigis, EcalEBTrigPrimDigiCollection &ebTPs)
 {
   std::cout << "Processing MultiFitTimingAlgoV1" << std::endl;
 

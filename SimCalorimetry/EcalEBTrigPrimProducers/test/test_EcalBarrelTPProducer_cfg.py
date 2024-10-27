@@ -5,24 +5,27 @@ process = cms.Process("EBTPGTest")
 process.load('Configuration.StandardSequences.Services_cff')
 process.load("FWCore.MessageService.MessageLogger_cfi")
 process.load('Configuration.EventContent.EventContent_cff')
-process.load('Configuration.Geometry.GeometryExtended2026D35Reco_cff') # for MTD samples
-process.load('Configuration.Geometry.GeometryExtended2026D35_cff') # for MTD samples
+process.load('Configuration.Geometry.GeometryExtended2026D110Reco_cff') # for Spring24 samples
+process.load('Configuration.Geometry.GeometryExtended2026D110_cff') # for Spring24 samples
+#process.load('Configuration.Geometry.GeometryExtended2026D35Reco_cff') # for MTD samples
+#process.load('Configuration.Geometry.GeometryExtended2026D35_cff') # for MTD samples
 #process.load('Configuration.Geometry.GeometryExtended2023D41Reco_cff') # for L1 TDR samples
 #process.load('Configuration.Geometry.GeometryExtended2023D41_cff') # for L1 TDR samples
 process.load('Configuration.StandardSequences.MagneticField_cff')
 
-process.MessageLogger.categories = cms.untracked.vstring('EBPhaseIITPStudies', 'FwkReport')
+#process.MessageLogger.categories = cms.untracked.vstring('EBPhaseIITPStudies', 'FwkReport')
 process.MessageLogger.cerr.FwkReport = cms.untracked.PSet(
    reportEvery = cms.untracked.int32(1)
 )
 
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(2000) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10) )
 
 process.source = cms.Source("PoolSource",
     fileNames = cms.untracked.vstring(
         #'/store/mc/PhaseIIMTDTDRAutumn18DR/SingleE_FlatPt-2to100/FEVT/NoPU_103X_upgrade2023_realistic_v2-v1/70000/B0464430-CA74-7844-A36A-A5EF21C3D7C0.root',
         #'/store/mc/PhaseIIMTDTDRAutumn18DR/SingleE_FlatPt-2to100/FEVT/PU200_103X_upgrade2023_realistic_v2-v1/70000/FF17CBE6-81E5-8D43-B58B-6DF17222820E.root',
-        '/store/mc/PhaseIIMTDTDRAutumn18DR/NeutrinoGun_E_10GeV/FEVT/PU200_103X_upgrade2023_realistic_v2-v1/280000/EFFCC733-2B7F-C645-929D-505B1E0949D6.root'
+        #'/store/mc/PhaseIIMTDTDRAutumn18DR/NeutrinoGun_E_10GeV/FEVT/PU200_103X_upgrade2023_realistic_v2-v1/280000/EFFCC733-2B7F-C645-929D-505B1E0949D6.root'
+        '/store/mc/Phase2Spring24DIGIRECOMiniAOD/DYToLL_M-50_TuneCP5_14TeV-pythia8/GEN-SIM-DIGI-RAW-MINIAOD/PU200_Trk1GeV_140X_mcRun4_realistic_v4-v1/2810000/47946cea-bd28-463f-ba64-0757207dd773.root'
     ),
 )
 
@@ -31,8 +34,7 @@ process.source = cms.Source("PoolSource",
 # ---- Global Tag :
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 from Configuration.AlCa.GlobalTag import GlobalTag
-#process.GlobalTag = GlobalTag(process.GlobalTag, 'PH2_1K_FB_V3::All', '')
-process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:run2_mc', '')
+process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:phase2_realistic', '')
 
 process.simEcalEBTriggerPrimitiveDigis = cms.EDProducer("EcalEBTrigPrimProducer",
     BarrelOnly = cms.bool(True),
@@ -85,6 +87,12 @@ process.ecalBcpPayloadParamsEsProducer = cms.ESProducer("EcalBcpPayloadParamsESP
             perCrystalParams = cms.VPSet(
             )
         ),
+        cms.PSet(
+            algo = cms.string("tpClusterAlgo"),
+            type = cms.string("crystalSumWithSwissCrossSpike"), # crystalSumWithSwissCrossSpike, hls
+            # the rest of the parameters is currently hardcoded in TPClusterAlgoV1.cc
+        ),
+
     )
 )
 
@@ -108,7 +116,7 @@ process.simEcalBarrelTPDigis = cms.EDProducer("EcalBarrelTPProducer",
     )
 )
 
-process.pNancy = cms.Path(process.simEcalEBTriggerPrimitiveDigis+process.simEcalBarrelTPDigis)
+process.p = cms.Path(process.simEcalEBTriggerPrimitiveDigis+process.simEcalBarrelTPDigis)
 
 process.Out = cms.OutputModule( "PoolOutputModule",
     fileName = cms.untracked.string( "EBTP_PhaseII_TESTDF_uncompEt_spikeflag.root" ),
