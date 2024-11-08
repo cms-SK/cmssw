@@ -14,12 +14,22 @@ process.maxEvents = cms.untracked.PSet(
     input = cms.untracked.int32(-1)
 )
 
-process.source = cms.Source("EcalBCPFileInputSource",
-    fileNames = cms.untracked.vstring('file:../../../hls/testbench_data/rx_tbspikes0p9_ld2_1000evts.txt'),
+#process.source = cms.Source("EcalBCPFileInputSource",
+#    fileNames = cms.untracked.vstring('file:../../../hls/testbench_data/rx_tbspikes0p9_ld2_2800evts.txt'),
+#    firstLuminosityBlockForEachRun = cms.untracked.VLuminosityBlockID([]),
+#    runNumber = cms.untracked.uint32(1),
+#    firstEventNumber = cms.untracked.uint32(1),
+#    startSample = cms.untracked.uint32(4),
+#    #skipEvents = cms.untracked.int32(467)
+#)
+
+process.source = cms.Source("EcalBCPH4FileInputSource",
+    fileNames = cms.untracked.vstring('file:../../../hls/testbench_data/H4_test_input.txt'),
     firstLuminosityBlockForEachRun = cms.untracked.VLuminosityBlockID([]),
     runNumber = cms.untracked.uint32(1),
     firstEventNumber = cms.untracked.uint32(1),
-    startSample = cms.untracked.uint32(4)
+    startSample = cms.untracked.uint32(0),
+    #skipEvents = cms.untracked.int32(467)
 )
 
 process.ecalBcpPayloadParamsSource = cms.ESSource("EmptyESSource",
@@ -44,24 +54,25 @@ process.ecalBcpPayloadParamsEsProducer = cms.ESProducer("EcalBcpPayloadParamsESP
 
     # configuration PSets for the individual payload algorithms
     algoConfigs = cms.VPSet(
-        #cms.PSet(
-        #    algo = cms.string("spikeTaggerLd"),
-        #    type = cms.string("ideal"), # ideal, hls
-        #    perCrystalParams = cms.VPSet(
-        #        cms.PSet(
-        #            ietaRange = cms.string(":"), # Example range formats "ietaMin:ietaMax", e.g. "-85:42" (user defined), "1:" (positive side), ":" (whole EB eta range)
-        #            iphiRange = cms.string(":"), # Example range formats "ietaMin:ietaMax", e.g. "90:270" (user defined), ":180" (MIN_IPHI:180), ":" (MIN_IPHI:MAX_IPHI)
-        #            spikeThreshold = cms.double(-0.1),
-        #            weights = cms.vdouble(1.5173, -2.1034, 1.8117, -0.6451)
-        #        )
-        #    )
-        #),
         cms.PSet(
             algo = cms.string("spikeTaggerLd"),
-            type = cms.string("hls"), # ideal, hls
+            type = cms.string("ideal"), # ideal, hls
             perCrystalParams = cms.VPSet(
+                cms.PSet(
+                    ietaRange = cms.string(":"), # Example range formats "ietaMin:ietaMax", e.g. "-85:42" (user defined), "1:" (positive side), ":" (whole EB eta range)
+                    iphiRange = cms.string(":"), # Example range formats "ietaMin:ietaMax", e.g. "90:270" (user defined), ":180" (MIN_IPHI:180), ":" (MIN_IPHI:MAX_IPHI)
+                    spikeThreshold = cms.double(-0.1),
+                    #weights = cms.vdouble(1.5173, -2.1034, 1.8117, -0.6451)
+                    weights = cms.vdouble(1.36, -1.30, 0.54) # weights used in LD2 HLS algo
+                )
             )
         ),
+        #cms.PSet(
+        #    algo = cms.string("spikeTaggerLd"),
+        #    type = cms.string("hls"), # ideal, hls
+        #    perCrystalParams = cms.VPSet(
+        #    )
+        #),
         cms.PSet(
             algo = cms.string("tpClusterAlgo"),
             type = cms.string("hls"), # crystalSumWithSwissCrossSpike, hls
@@ -126,6 +137,12 @@ process.simEcalBarrelTPDigisIdealSpikeTagger = cms.EDProducer("EcalBarrelTPProdu
                 )
             )
         ),
+        #cms.PSet(
+        #    algo = cms.string("spikeTaggerLd"),
+        #    type = cms.string("hls"), # ideal, hls
+        #    perCrystalParams = cms.VPSet(
+        #    )
+        #),
         cms.PSet(
             algo = cms.string("tpClusterAlgo"),
             type = cms.string("crystalSumWithSwissCrossSpike"), # crystalSumWithSwissCrossSpike, hls
@@ -145,9 +162,9 @@ process.ecalBarrelTPAnalyzer = cms.EDAnalyzer("EcalBarrelTPAnalyzer",
    barrelTPClusterColl1 = cms.InputTag("simEcalBarrelTPDigisIdealSpikeTagger"),
    barrelTPClusterColl2 = cms.InputTag("simEcalBarrelTPDigis"),
    sampleOfInterest = cms.uint32(sampleOfInterest),
-   tpCollName1 = cms.untracked.string("Ideal LD2 collection"),
+   tpCollName1 = cms.untracked.string("C++ LD2 collection"),
    tpCollName2 = cms.untracked.string("HLS LD2 collection"),
-   tpClusterCollName1 = cms.untracked.string("Ideal LD2 collection"),
+   tpClusterCollName1 = cms.untracked.string("C++ LD2 collection"),
    tpClusterCollName2 = cms.untracked.string("HLS LD2 collection")
 )
 

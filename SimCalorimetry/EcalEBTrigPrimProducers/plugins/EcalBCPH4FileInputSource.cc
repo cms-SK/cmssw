@@ -1,9 +1,9 @@
 // -*- C++ -*-
 //
 // Package:    SimCalorimetry/EcalEBTrigPrimProducers
-// Class:      EcalBCPFileInputSource
+// Class:      EcalBCPH4FileInputSource
 // 
-/**\class EcalBCPFileInputSource EcalBCPFileInputSource.cc SimCalorimetry/EcalEBTrigPrimProducers/plugins/EcalBCPFileInputSource.cc
+/**\class EcalBCPH4FileInputSource EcalBCPH4FileInputSource.cc SimCalorimetry/EcalEBTrigPrimProducers/plugins/EcalBCPH4FileInputSource.cc
 
  Description: Produces Ecal Barrel Calorimeter Processor inputs (Phase2 EcalDigis) from text files
 
@@ -41,10 +41,10 @@
 // class declaration
 //
 
-class EcalBCPFileInputSource : public edm::ProducerSourceFromFiles {
+class EcalBCPH4FileInputSource : public edm::ProducerSourceFromFiles {
  public:
-  explicit EcalBCPFileInputSource(const edm::ParameterSet&, edm::InputSourceDescription const&);
-  ~EcalBCPFileInputSource();
+  explicit EcalBCPH4FileInputSource(const edm::ParameterSet&, edm::InputSourceDescription const&);
+  ~EcalBCPH4FileInputSource();
 
   static void fillDescriptions(edm::ConfigurationDescriptions& descriptions);
 
@@ -75,7 +75,7 @@ class EcalBCPFileInputSource : public edm::ProducerSourceFromFiles {
 //
 // constructors and destructor
 //
-EcalBCPFileInputSource::EcalBCPFileInputSource(const edm::ParameterSet& iConfig, const edm::InputSourceDescription &iSrcDesc) :
+EcalBCPH4FileInputSource::EcalBCPH4FileInputSource(const edm::ParameterSet& iConfig, const edm::InputSourceDescription &iSrcDesc) :
   edm::ProducerSourceFromFiles(iConfig, iSrcDesc, true),
   runnr_(iConfig.getUntrackedParameter<unsigned int>("runNumber")),
   evtnr_(iConfig.getUntrackedParameter<unsigned int>("firstEventNumber")),
@@ -93,7 +93,7 @@ EcalBCPFileInputSource::EcalBCPFileInputSource(const edm::ParameterSet& iConfig,
 }
 
 
-EcalBCPFileInputSource::~EcalBCPFileInputSource()
+EcalBCPH4FileInputSource::~EcalBCPH4FileInputSource()
 {
   if (fstream_.is_open()) {
     fstream_.close();
@@ -105,7 +105,7 @@ EcalBCPFileInputSource::~EcalBCPFileInputSource()
 // member functions
 //
 
-void EcalBCPFileInputSource::openFile()
+void EcalBCPH4FileInputSource::openFile()
 {
   if (!fstream_.is_open()) {
     fstream_.open(fname_);
@@ -115,7 +115,7 @@ void EcalBCPFileInputSource::openFile()
   }
 }
 
-void EcalBCPFileInputSource::readHeader()
+void EcalBCPH4FileInputSource::readHeader()
 {
   nchannels_ = 0;
   if (fstream_.good()) {
@@ -148,7 +148,7 @@ void EcalBCPFileInputSource::readHeader()
 }
 
 bool
-EcalBCPFileInputSource::setRunAndEventInfo(edm::EventID& id, edm::TimeValue_t& time, edm::EventAuxiliary::ExperimentType& eType)
+EcalBCPH4FileInputSource::setRunAndEventInfo(edm::EventID& id, edm::TimeValue_t& time, edm::EventAuxiliary::ExperimentType& eType)
 {
   // stop if there are no more data in the file
   if (fstream_.eof()) {
@@ -163,29 +163,32 @@ EcalBCPFileInputSource::setRunAndEventInfo(edm::EventID& id, edm::TimeValue_t& t
     for (unsigned int i = 0; i < nchannels_; ++i) {
       ebDigis.push_back(detIds_[i].rawId());
     }
-
     unsigned int s = 0;
     while (not fstream_.eof()) {
-      std::istringstream strstream(line_);
-      std::cout << "sample " << s << ", line: " << line_;
+      for (unsigned int j = 0; j < 10; ++j)
+      {
+        std::istringstream strstream(line_);
+        std::cout << "sample " << s << ", line: " << line_;
 
-      // Only take as many frames as the ECAL data format can handle
-      if (s >= startSample_ and s < startSample_ + EcalDataFrame::MAXSAMPLES) {
-        std::cout << ", --> take";
-        std::string labelstr;
-        std::string framenumberstr;
-        std::string colonstr;
-        int adc;
-        bool first_sample;
-        strstream >> labelstr >> framenumberstr >> colonstr;
-        for (unsigned int i = 0; i < nchannels_; ++i) {
-          strstream >> adc >> first_sample;
-          EcalMGPASample sample(adc, 1); // EcalMGPASample applies a mask of 0xFFF on adc count (max. adc: 4095)
-          static_cast<EcalDataFrame>(ebDigis[i]).setSample(s - startSample_, sample);
+        // Only take as many frames as the ECAL data format can handle
+        if (s >= startSample_ and s < startSample_ + EcalDataFrame::MAXSAMPLES) {
+          std::cout << ", --> take" << std::endl;
+          std::string labelstr;
+          std::string framenumberstr;
+          std::string colonstr;
+          int adc;
+          bool first_sample;
+          strstream >> labelstr >> framenumberstr >> colonstr;
+          for (unsigned int i = 0; i < nchannels_; ++i) {
+            strstream >> adc >> first_sample;
+            EcalMGPASample sample(adc/4, 1); // EcalMGPASample applies a mask of 0xFFF on adc count (max. adc: 4095)
+            //std::cout << "sample = " << sample << "\n";
+            static_cast<EcalDataFrame>(ebDigis[i]).setSample(s - startSample_, sample);
+          }
         }
+        //std::cout << std::endl;
+        ++s;
       }
-      std::cout << std::endl;
-      ++s;
       getline(fstream_, line_);
       // if first_sample is 1 this is already the line of the next event
       if (line_.rfind("1") == line_.size() - 1) {
@@ -211,7 +214,7 @@ EcalBCPFileInputSource::setRunAndEventInfo(edm::EventID& id, edm::TimeValue_t& t
 
 // ------------ method called to produce the data  ------------
 void
-EcalBCPFileInputSource::produce(edm::Event& iEvent)
+EcalBCPH4FileInputSource::produce(edm::Event& iEvent)
 {
   // set digi object and put it in the event
   auto ebDigiOut = std::make_unique<EBDigiCollection>(ebDigis_);
@@ -221,7 +224,7 @@ EcalBCPFileInputSource::produce(edm::Event& iEvent)
  
 // ------------ method fills 'descriptions' with the allowed parameters for the module  ------------
 void
-EcalBCPFileInputSource::fillDescriptions(edm::ConfigurationDescriptions& descriptions) {
+EcalBCPH4FileInputSource::fillDescriptions(edm::ConfigurationDescriptions& descriptions) {
   //The following says we do not know what parameters are allowed so do no validation
   // Please change this to state exactly what you do use, even if it is no parameters
   edm::ParameterSetDescription desc;
@@ -230,4 +233,4 @@ EcalBCPFileInputSource::fillDescriptions(edm::ConfigurationDescriptions& descrip
 }
 
 //define this as a plug-in
-DEFINE_FWK_INPUT_SOURCE(EcalBCPFileInputSource);
+DEFINE_FWK_INPUT_SOURCE(EcalBCPH4FileInputSource);
