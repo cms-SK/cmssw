@@ -1,12 +1,12 @@
 #include "DataFormats/EcalDigi/interface/EcalEBTriggerPrimitiveDigi.h"
 #include <iostream>
 
-EcalEBTriggerPrimitiveDigi::EcalEBTriggerPrimitiveDigi() : size_(0), data_(MAXSAMPLES) {}
+EcalEBTriggerPrimitiveDigi::EcalEBTriggerPrimitiveDigi() : size_(0), data_(MAXSAMPLES), auxData_(MAXSAMPLES) {}
 //EcalTriggerPrimitiveDigi::EcalTriggerPrimitiveDigi(const EcalTrigTowerDetId& id) : id_(id),
 //size_(0), data_(MAXSAMPLES) {
 //}
 
-EcalEBTriggerPrimitiveDigi::EcalEBTriggerPrimitiveDigi(const EBDetId& id) : id_(id), size_(0), data_(MAXSAMPLES) {}
+EcalEBTriggerPrimitiveDigi::EcalEBTriggerPrimitiveDigi(const EBDetId& id) : id_(id), size_(0), data_(MAXSAMPLES), auxData_(MAXSAMPLES) {}
 
 void EcalEBTriggerPrimitiveDigi::setSample(int i, const EcalEBTriggerPrimitiveSample& sam) {
   //  std::cout << " In setSample  i " << i << "  sam " << sam << std::endl;
