@@ -9,18 +9,19 @@
 
 namespace ecalph2 {
 
-class SpikeTaggerLDHLSAlgoV1 : public SpikeTaggerLDAlgo {
- public:
-  SpikeTaggerLDHLSAlgoV1(const std::shared_ptr<ecalph2::EcalBcpPayloadParamsHelper> ecalBcpPayloadParamsHelper, const edm::EventSetup &eventSetup);
-  ~SpikeTaggerLDHLSAlgoV1() override {};
+  class SpikeTaggerLDHLSAlgoV1 : public SpikeTaggerLDAlgo {
+  public:
+    SpikeTaggerLDHLSAlgoV1(const std::shared_ptr<ecalph2::EcalBcpPayloadParamsHelper> ecalBcpPayloadParamsHelper,
+                           const edm::EventSetup &eventSetup);
+    ~SpikeTaggerLDHLSAlgoV1() override {};
 
-  void processEvent(const EBDigiCollection &ebDigis, EcalEBTrigPrimDigiCollection &ebTPs) override;
+    void processEvent(const EBDigiCollection &ebDigis, EcalEBTrigPrimDigiCollection &ebTPs) override;
 
- private:
-  unsigned int peakIdx_;
+  private:
+    unsigned int peakIdx_;
 
-  std::array<float, 4> gains_;
-};
+    std::array<float, 4> gains_;
+  };
 
-} // namespace ecalph2
+}  // namespace ecalph2
 #endif

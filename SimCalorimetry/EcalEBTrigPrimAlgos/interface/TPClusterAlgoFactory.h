@@ -8,15 +8,15 @@
 
 namespace ecalph2 {
 
-class TPClusterAlgoFactory {
- public:
-  TPClusterAlgoFactory() {};
-  ~TPClusterAlgoFactory() {};
+  class TPClusterAlgoFactory {
+  public:
+    TPClusterAlgoFactory() {};
+    ~TPClusterAlgoFactory() {};
 
-  typedef std::unique_ptr<TPClusterAlgo> ReturnType;
+    typedef std::unique_ptr<TPClusterAlgo> ReturnType;
 
-  ReturnType create(const std::shared_ptr<ecalph2::EcalBcpPayloadParamsHelper> ecalBcpPayloadParamsHelper);
-};
+    ReturnType create(const std::shared_ptr<ecalph2::EcalBcpPayloadParamsHelper> ecalBcpPayloadParamsHelper);
+  };
 
-} // namespace ecalph2
+}  // namespace ecalph2
 #endif

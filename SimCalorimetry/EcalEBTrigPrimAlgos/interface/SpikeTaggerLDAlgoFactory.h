@@ -8,15 +8,16 @@
 
 namespace ecalph2 {
 
-class SpikeTaggerLDAlgoFactory {
- public:
-  SpikeTaggerLDAlgoFactory() {};
-  ~SpikeTaggerLDAlgoFactory() {};
+  class SpikeTaggerLDAlgoFactory {
+  public:
+    SpikeTaggerLDAlgoFactory() {};
+    ~SpikeTaggerLDAlgoFactory() {};
 
-  typedef std::unique_ptr<SpikeTaggerLDAlgo> ReturnType;
+    typedef std::unique_ptr<SpikeTaggerLDAlgo> ReturnType;
 
-  ReturnType create(const std::shared_ptr<ecalph2::EcalBcpPayloadParamsHelper> ecalBcpPayloadParamsHelper, const edm::EventSetup &eventSetup);
-};
+    ReturnType create(const std::shared_ptr<ecalph2::EcalBcpPayloadParamsHelper> ecalBcpPayloadParamsHelper,
+                      const edm::EventSetup &eventSetup);
+  };
 
-} // namespace ecalph2
+}  // namespace ecalph2
 #endif

@@ -7,17 +7,19 @@
 
 namespace ecalph2 {
 
-class TPClusterAlgo {
- public:
-  TPClusterAlgo(const std::shared_ptr<ecalph2::EcalBcpPayloadParamsHelper> ecalBcpPayloadParamsHelper) : ecalBcpPayloadParamsHelper_(ecalBcpPayloadParamsHelper) {};
-  virtual ~TPClusterAlgo() {};
+  class TPClusterAlgo {
+  public:
+    TPClusterAlgo(const std::shared_ptr<ecalph2::EcalBcpPayloadParamsHelper> ecalBcpPayloadParamsHelper)
+        : ecalBcpPayloadParamsHelper_(ecalBcpPayloadParamsHelper) {};
+    virtual ~TPClusterAlgo() {};
 
-  virtual void processEvent(const EcalEBTrigPrimDigiCollection &ebTPs, std::vector<EcalEBTriggerPrimitiveCluster> &ebTPClusters) = 0;
+    virtual void processEvent(const EcalEBTrigPrimDigiCollection &ebTPs,
+                              std::vector<EcalEBTriggerPrimitiveCluster> &ebTPClusters) = 0;
 
- protected:
-  // object holding the configuration
-  const std::shared_ptr<EcalBcpPayloadParamsHelper> ecalBcpPayloadParamsHelper_;
-};
+  protected:
+    // object holding the configuration
+    const std::shared_ptr<EcalBcpPayloadParamsHelper> ecalBcpPayloadParamsHelper_;
+  };
 
-} // namespace ecalph2
+}  // namespace ecalph2
 #endif

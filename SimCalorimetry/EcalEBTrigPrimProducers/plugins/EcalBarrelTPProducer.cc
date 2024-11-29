@@ -2,7 +2,7 @@
 //
 // Package:    SimCalorimetry/EcalEBTrigPrimProducers
 // Class:      EcalBarrelTPProducer
-// 
+//
 /**\class EcalBarrelTPProducer EcalBarrelTPProducer.cc SimCalorimetry/EcalEBTrigPrimProducers/plugins/EcalBarrelTPProducer.cc
 
  Description: Ecal barrel trigger primitive emulator
@@ -15,7 +15,6 @@
 //         Created:  Tue, 05 Nov 2019 11:35:37 GMT
 //
 //
-
 
 // system include files
 #include <iostream>
@@ -42,13 +41,13 @@
 //
 
 class EcalBarrelTPProducer : public edm::stream::EDProducer<> {
- public:
+public:
   explicit EcalBarrelTPProducer(const edm::ParameterSet&);
   ~EcalBarrelTPProducer();
 
   static void fillDescriptions(edm::ConfigurationDescriptions& descriptions);
 
- private:
+private:
   virtual void beginStream(edm::StreamID) override;
   virtual void produce(edm::Event&, const edm::EventSetup&) override;
   virtual void endStream() override;
@@ -72,30 +71,22 @@ class EcalBarrelTPProducer : public edm::stream::EDProducer<> {
 //
 // constructors and destructor
 //
-EcalBarrelTPProducer::EcalBarrelTPProducer(const edm::ParameterSet& iConfig) :
-  config_(iConfig),
-  fwVersion_(0),
-  esEbPayloadParamsToken_(esConsumes<edm::Transition::BeginRun>()),
-  ebDigiToken_(consumes<EBDigiCollection>(iConfig.getParameter<edm::InputTag>("barrelEcalDigis"))),
-  ebTPToken_(produces<EcalEBTrigPrimDigiCollection>()),
-  ebTPClusterToken_(produces<EcalEBTriggerPrimitiveClusterCollection>())
-{
-}
+EcalBarrelTPProducer::EcalBarrelTPProducer(const edm::ParameterSet& iConfig)
+    : config_(iConfig),
+      fwVersion_(0),
+      esEbPayloadParamsToken_(esConsumes<edm::Transition::BeginRun>()),
+      ebDigiToken_(consumes<EBDigiCollection>(iConfig.getParameter<edm::InputTag>("barrelEcalDigis"))),
+      ebTPToken_(produces<EcalEBTrigPrimDigiCollection>()),
+      ebTPClusterToken_(produces<EcalEBTriggerPrimitiveClusterCollection>()) {}
 
-
-EcalBarrelTPProducer::~EcalBarrelTPProducer()
-{
-}
-
+EcalBarrelTPProducer::~EcalBarrelTPProducer() {}
 
 //
 // member functions
 //
 
 // ------------ method called to produce the data  ------------
-void
-EcalBarrelTPProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
-{
+void EcalBarrelTPProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup) {
   // get the input data from the event
   edm::Handle<EBDigiCollection> ebDigisHandle;
   iEvent.getByToken(ebDigiToken_, ebDigisHandle);
@@ -120,24 +111,17 @@ EcalBarrelTPProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
 }
 
 // ------------ method called once each stream before processing any runs, lumis or events  ------------
-void
-EcalBarrelTPProducer::beginStream(edm::StreamID)
-{
-}
+void EcalBarrelTPProducer::beginStream(edm::StreamID) {}
 
 // ------------ method called once each stream after processing all runs, lumis and events  ------------
-void
-EcalBarrelTPProducer::endStream() {
-}
+void EcalBarrelTPProducer::endStream() {}
 
 // ------------ method called when starting to processes a run  ------------
-void
-EcalBarrelTPProducer::beginRun(edm::Run const&, edm::EventSetup const &eventSetup)
-{
+void EcalBarrelTPProducer::beginRun(edm::Run const&, edm::EventSetup const& eventSetup) {
   // get the configuration
   const auto configSource = config_.getParameter<std::string>("configSource");
   if (configSource == "fromES") {
-    const auto &esParams = eventSetup.getData(esEbPayloadParamsToken_);
+    const auto& esParams = eventSetup.getData(esEbPayloadParamsToken_);
     ecalBcpPayloadParamsHelper_ = std::make_shared<ecalph2::EcalBcpPayloadParamsHelper>(esParams);
   } else if (configSource == "fromModuleConfig") {
     ecalBcpPayloadParamsHelper_ = std::make_shared<ecalph2::EcalBcpPayloadParamsHelper>(config_);
@@ -156,10 +140,8 @@ EcalBarrelTPProducer::beginRun(edm::Run const&, edm::EventSetup const &eventSetu
   }
 }
 
- 
 // ------------ method fills 'descriptions' with the allowed parameters for the module  ------------
-void
-EcalBarrelTPProducer::fillDescriptions(edm::ConfigurationDescriptions& descriptions) {
+void EcalBarrelTPProducer::fillDescriptions(edm::ConfigurationDescriptions& descriptions) {
   //The following says we do not know what parameters are allowed so do no validation
   // Please change this to state exactly what you do use, even if it is no parameters
   edm::ParameterSetDescription desc;

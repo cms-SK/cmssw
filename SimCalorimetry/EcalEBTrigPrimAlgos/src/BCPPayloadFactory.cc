@@ -17,8 +17,9 @@
 #include "SimCalorimetry/EcalEBTrigPrimAlgos/interface/BCPPayloadFactory.h"
 #include "SimCalorimetry/EcalEBTrigPrimAlgos/interface/BCPPayloadV1.h"
 
-ecalph2::BCPPayloadFactory::ReturnType ecalph2::BCPPayloadFactory::create(const std::shared_ptr<ecalph2::EcalBcpPayloadParamsHelper> ecalBcpPayloadParamsHelper, const edm::EventSetup &eventSetup)
-{
+ecalph2::BCPPayloadFactory::ReturnType ecalph2::BCPPayloadFactory::create(
+    const std::shared_ptr<ecalph2::EcalBcpPayloadParamsHelper> ecalBcpPayloadParamsHelper,
+    const edm::EventSetup &eventSetup) {
   const auto fwVersion = ecalBcpPayloadParamsHelper->fwVersion();
 
   // FW string for messages
@@ -37,4 +38,3 @@ ecalph2::BCPPayloadFactory::ReturnType ecalph2::BCPPayloadFactory::create(const 
 
   return payload;
 }
-

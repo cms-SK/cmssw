@@ -2,7 +2,7 @@
 /// \class ecalph2::TPClusterHLSAlgoV1
 ///
 /// \author: Thomas Reis
-/// 
+///
 /// Version: V1
 /// Calls the HLS algorithm for the BCP clustering algorithm after preparing the data.
 ///
@@ -19,12 +19,12 @@
 
 using namespace ecalph2::hls::bcpswisscross;
 
-ecalph2::TPClusterHLSAlgoV1::TPClusterHLSAlgoV1(const std::shared_ptr<ecalph2::EcalBcpPayloadParamsHelper> ecalBcpPayloadParamsHelper) : TPClusterAlgo(ecalBcpPayloadParamsHelper)
-{
-}
+ecalph2::TPClusterHLSAlgoV1::TPClusterHLSAlgoV1(
+    const std::shared_ptr<ecalph2::EcalBcpPayloadParamsHelper> ecalBcpPayloadParamsHelper)
+    : TPClusterAlgo(ecalBcpPayloadParamsHelper) {}
 
-void ecalph2::TPClusterHLSAlgoV1::processEvent(const EcalEBTrigPrimDigiCollection &ebTPs, std::vector<EcalEBTriggerPrimitiveCluster> &ebTPClusters)
-{
+void ecalph2::TPClusterHLSAlgoV1::processEvent(const EcalEBTrigPrimDigiCollection &ebTPs,
+                                               std::vector<EcalEBTriggerPrimitiveCluster> &ebTPClusters) {
   std::cout << "Processing TPClusterHLSAlgoV1" << std::endl;
   std::cout << "This TP collection has size: " << ebTPs.size() << std::endl;
 
@@ -81,12 +81,13 @@ void ecalph2::TPClusterHLSAlgoV1::processEvent(const EcalEBTrigPrimDigiCollectio
     scOutput = swissCross(data, data_etap, data_etam, data_phip, data_phim);
 
     // setting the TPClusters
-    for (const auto& scCluster : scOutput) {
+    for (const auto &scCluster : scOutput) {
       if (scCluster.et > 0 || scCluster.spike) {
-        std::cout << "Adding TP cluster et=" << scCluster.et << ", ieta=" << scCluster.eta << ", iphi=" << scCluster.phi << ", number of crystals=" << scCluster.ncrystals << ", spike=" << scCluster.spike << std::endl;
-        ebTPClusters.emplace_back(EcalEBTriggerPrimitiveCluster(scCluster.et, scCluster.time, scCluster.eta, scCluster.phi, scCluster.ncrystals, scCluster.spike));
+        std::cout << "Adding TP cluster et=" << scCluster.et << ", ieta=" << scCluster.eta << ", iphi=" << scCluster.phi
+                  << ", number of crystals=" << scCluster.ncrystals << ", spike=" << scCluster.spike << std::endl;
+        ebTPClusters.emplace_back(EcalEBTriggerPrimitiveCluster(
+            scCluster.et, scCluster.time, scCluster.eta, scCluster.phi, scCluster.ncrystals, scCluster.spike));
       }
     }
   }
 }
-

@@ -20,8 +20,9 @@
 
 #include "SimCalorimetry/EcalEBTrigPrimAlgos/interface/MultiFitTimingAlgoV1.h"
 
-ecalph2::MultiFitTimingAlgoFactory::ReturnType ecalph2::MultiFitTimingAlgoFactory::create(const std::shared_ptr<ecalph2::EcalBcpPayloadParamsHelper> ecalBcpPayloadParamsHelper, const edm::EventSetup &eventSetup)
-{
+ecalph2::MultiFitTimingAlgoFactory::ReturnType ecalph2::MultiFitTimingAlgoFactory::create(
+    const std::shared_ptr<ecalph2::EcalBcpPayloadParamsHelper> ecalBcpPayloadParamsHelper,
+    const edm::EventSetup &eventSetup) {
   ReturnType multiFitTimingAlgo;
 
   //const auto algoType = ecalBcpPayloadParamsHelper->multiFitTimingAlgoType();
@@ -39,7 +40,8 @@ ecalph2::MultiFitTimingAlgoFactory::ReturnType ecalph2::MultiFitTimingAlgoFactor
       edm::LogInfo("ecalph2::MultiFitTimingAlgoFactory") << "Creating multifit timing algo for FW version " << fwStr;
       multiFitTimingAlgo = std::make_unique<ecalph2::MultiFitTimingAlgoV1>(ecalBcpPayloadParamsHelper, eventSetup);
     } else {
-      edm::LogError("ecalph2::MultiFitTimingAlgoFactory") << "No multifit timing algo to create for FW version " << fwStr;
+      edm::LogError("ecalph2::MultiFitTimingAlgoFactory")
+          << "No multifit timing algo to create for FW version " << fwStr;
     }
   } else {
     edm::LogError("ecalph2::MultiFitTimingAlgoFactory") << "Unknown multifit timing algo type '" << algoType << "'";
@@ -47,4 +49,3 @@ ecalph2::MultiFitTimingAlgoFactory::ReturnType ecalph2::MultiFitTimingAlgoFactor
 
   return multiFitTimingAlgo;
 }
-

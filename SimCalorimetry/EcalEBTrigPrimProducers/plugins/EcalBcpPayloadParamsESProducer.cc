@@ -2,7 +2,7 @@
 //
 // Package:    SimCalorimetry/EcalEBTrigPrimProducers
 // Class:      EcalBcpPayloadParamsESProducer
-// 
+//
 /**\class EcalBcpPayloadParamsESProducer
 
  Description: Produces the configuration parameters for the BCP payload
@@ -35,40 +35,37 @@
 //
 
 class EcalBcpPayloadParamsESProducer : public edm::ESProducer {
- public:
+public:
   EcalBcpPayloadParamsESProducer(const edm::ParameterSet&);
   ~EcalBcpPayloadParamsESProducer() override;
 
   using ReturnType = std::unique_ptr<EcalBcpPayloadParams>;
 
   ReturnType produce(const EcalBcpPayloadParamsRcd&);
- private:
+
+private:
   EcalBcpPayloadParams params_;
 };
 
 //
 // constructors and destructor
 //
-EcalBcpPayloadParamsESProducer::EcalBcpPayloadParamsESProducer(const edm::ParameterSet& iConfig)
-{
+EcalBcpPayloadParamsESProducer::EcalBcpPayloadParamsESProducer(const edm::ParameterSet& iConfig) {
   setWhatProduced(this);
 
   ecalph2::EcalBcpPayloadParamsHelper paramsHelper(iConfig);
   params_ = static_cast<EcalBcpPayloadParams>(paramsHelper);
 }
 
-EcalBcpPayloadParamsESProducer::~EcalBcpPayloadParamsESProducer()
-{
-}
+EcalBcpPayloadParamsESProducer::~EcalBcpPayloadParamsESProducer() {}
 
 //
 // member functions
 //
 
 // ------------ method called to produce the data  ------------
-EcalBcpPayloadParamsESProducer::ReturnType
-EcalBcpPayloadParamsESProducer::produce(const EcalBcpPayloadParamsRcd& iRecord)
-{
+EcalBcpPayloadParamsESProducer::ReturnType EcalBcpPayloadParamsESProducer::produce(
+    const EcalBcpPayloadParamsRcd& iRecord) {
   auto product = std::make_unique<EcalBcpPayloadParams>(params_);
   return product;
 }

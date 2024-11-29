@@ -8,15 +8,16 @@
 
 namespace ecalph2 {
 
-class BCPPayloadFactory {
- public:
-  BCPPayloadFactory() {};
-  ~BCPPayloadFactory() {};
+  class BCPPayloadFactory {
+  public:
+    BCPPayloadFactory() {};
+    ~BCPPayloadFactory() {};
 
-  typedef std::unique_ptr<BCPPayload> ReturnType;
+    typedef std::unique_ptr<BCPPayload> ReturnType;
 
-  ReturnType create(const std::shared_ptr<ecalph2::EcalBcpPayloadParamsHelper> ecalBcpPayloadParamsHelper, const edm::EventSetup &eventSetup);
-};
+    ReturnType create(const std::shared_ptr<ecalph2::EcalBcpPayloadParamsHelper> ecalBcpPayloadParamsHelper,
+                      const edm::EventSetup &eventSetup);
+  };
 
-} // namespace ecalph2
+}  // namespace ecalph2
 #endif

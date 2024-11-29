@@ -2,7 +2,7 @@
 //
 // Package:    SimCalorimetry/EcalEBTrigPrimProducers
 // Class:      EcalBCPH4FileInputSource
-// 
+//
 /**\class EcalBCPH4FileInputSource EcalBCPH4FileInputSource.cc SimCalorimetry/EcalEBTrigPrimProducers/plugins/EcalBCPH4FileInputSource.cc
 
  Description: Produces Ecal Barrel Calorimeter Processor inputs (Phase2 EcalDigis) from text files
@@ -15,7 +15,6 @@
 //         Created:  Tue, 10 Mar 2020 15:45:37 GMT
 //
 //
-
 
 // system include files
 #include <iostream>
@@ -42,14 +41,16 @@
 //
 
 class EcalBCPH4FileInputSource : public edm::ProducerSourceFromFiles {
- public:
+public:
   explicit EcalBCPH4FileInputSource(const edm::ParameterSet&, edm::InputSourceDescription const&);
   ~EcalBCPH4FileInputSource();
 
   static void fillDescriptions(edm::ConfigurationDescriptions& descriptions);
 
- private:
-  bool setRunAndEventInfo(edm::EventID& id, edm::TimeValue_t& time, edm::EventAuxiliary::ExperimentType& eType) override;
+private:
+  bool setRunAndEventInfo(edm::EventID& id,
+                          edm::TimeValue_t& time,
+                          edm::EventAuxiliary::ExperimentType& eType) override;
   virtual void produce(edm::Event&) override;
 
   void openFile();
@@ -75,15 +76,15 @@ class EcalBCPH4FileInputSource : public edm::ProducerSourceFromFiles {
 //
 // constructors and destructor
 //
-EcalBCPH4FileInputSource::EcalBCPH4FileInputSource(const edm::ParameterSet& iConfig, const edm::InputSourceDescription &iSrcDesc) :
-  edm::ProducerSourceFromFiles(iConfig, iSrcDesc, true),
-  runnr_(iConfig.getUntrackedParameter<unsigned int>("runNumber")),
-  evtnr_(iConfig.getUntrackedParameter<unsigned int>("firstEventNumber")),
-  startSample_(iConfig.getUntrackedParameter<unsigned int>("startSample")),
-  skipUntilEventNr_(evtnr_ + iConfig.getUntrackedParameter<int>("skipEvents", 0)),
-  nchannels_(0),
-  ebDigiToken_(produces<EBDigiCollection>())
-{
+EcalBCPH4FileInputSource::EcalBCPH4FileInputSource(const edm::ParameterSet& iConfig,
+                                                   const edm::InputSourceDescription& iSrcDesc)
+    : edm::ProducerSourceFromFiles(iConfig, iSrcDesc, true),
+      runnr_(iConfig.getUntrackedParameter<unsigned int>("runNumber")),
+      evtnr_(iConfig.getUntrackedParameter<unsigned int>("firstEventNumber")),
+      startSample_(iConfig.getUntrackedParameter<unsigned int>("startSample")),
+      skipUntilEventNr_(evtnr_ + iConfig.getUntrackedParameter<int>("skipEvents", 0)),
+      nchannels_(0),
+      ebDigiToken_(produces<EBDigiCollection>()) {
   if (fileNames(0).empty()) {
     throw cms::Exception("FileOpenError") << "No input file";
   }
@@ -92,21 +93,17 @@ EcalBCPH4FileInputSource::EcalBCPH4FileInputSource(const edm::ParameterSet& iCon
   readHeader();
 }
 
-
-EcalBCPH4FileInputSource::~EcalBCPH4FileInputSource()
-{
+EcalBCPH4FileInputSource::~EcalBCPH4FileInputSource() {
   if (fstream_.is_open()) {
     fstream_.close();
   }
 }
 
-
 //
 // member functions
 //
 
-void EcalBCPH4FileInputSource::openFile()
-{
+void EcalBCPH4FileInputSource::openFile() {
   if (!fstream_.is_open()) {
     fstream_.open(fname_);
     if (!fstream_.good()) {
@@ -115,8 +112,7 @@ void EcalBCPH4FileInputSource::openFile()
   }
 }
 
-void EcalBCPH4FileInputSource::readHeader()
-{
+void EcalBCPH4FileInputSource::readHeader() {
   nchannels_ = 0;
   if (fstream_.good()) {
     while (getline(fstream_, line_)) {
@@ -147,9 +143,9 @@ void EcalBCPH4FileInputSource::readHeader()
   }
 }
 
-bool
-EcalBCPH4FileInputSource::setRunAndEventInfo(edm::EventID& id, edm::TimeValue_t& time, edm::EventAuxiliary::ExperimentType& eType)
-{
+bool EcalBCPH4FileInputSource::setRunAndEventInfo(edm::EventID& id,
+                                                  edm::TimeValue_t& time,
+                                                  edm::EventAuxiliary::ExperimentType& eType) {
   // stop if there are no more data in the file
   if (fstream_.eof()) {
     return false;
@@ -165,8 +161,7 @@ EcalBCPH4FileInputSource::setRunAndEventInfo(edm::EventID& id, edm::TimeValue_t&
     }
     unsigned int s = 0;
     while (not fstream_.eof()) {
-      for (unsigned int j = 0; j < 10; ++j)
-      {
+      for (unsigned int j = 0; j < 10; ++j) {
         std::istringstream strstream(line_);
         std::cout << "sample " << s << ", line: " << line_;
 
@@ -181,7 +176,7 @@ EcalBCPH4FileInputSource::setRunAndEventInfo(edm::EventID& id, edm::TimeValue_t&
           strstream >> labelstr >> framenumberstr >> colonstr;
           for (unsigned int i = 0; i < nchannels_; ++i) {
             strstream >> adc >> first_sample;
-            EcalMGPASample sample(adc/4, 1); // EcalMGPASample applies a mask of 0xFFF on adc count (max. adc: 4095)
+            EcalMGPASample sample(adc / 4, 1);  // EcalMGPASample applies a mask of 0xFFF on adc count (max. adc: 4095)
             //std::cout << "sample = " << sample << "\n";
             static_cast<EcalDataFrame>(ebDigis[i]).setSample(s - startSample_, sample);
           }
@@ -207,24 +202,18 @@ EcalBCPH4FileInputSource::setRunAndEventInfo(edm::EventID& id, edm::TimeValue_t&
     ++evtnr_;
   } while (static_cast<long>(evtnr_) <= skipUntilEventNr_);
 
-
   return true;
 }
 
-
 // ------------ method called to produce the data  ------------
-void
-EcalBCPH4FileInputSource::produce(edm::Event& iEvent)
-{
+void EcalBCPH4FileInputSource::produce(edm::Event& iEvent) {
   // set digi object and put it in the event
   auto ebDigiOut = std::make_unique<EBDigiCollection>(ebDigis_);
   iEvent.put(ebDigiToken_, std::move(ebDigiOut));
 }
 
- 
 // ------------ method fills 'descriptions' with the allowed parameters for the module  ------------
-void
-EcalBCPH4FileInputSource::fillDescriptions(edm::ConfigurationDescriptions& descriptions) {
+void EcalBCPH4FileInputSource::fillDescriptions(edm::ConfigurationDescriptions& descriptions) {
   //The following says we do not know what parameters are allowed so do no validation
   // Please change this to state exactly what you do use, even if it is no parameters
   edm::ParameterSetDescription desc;

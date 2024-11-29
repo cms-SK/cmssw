@@ -8,15 +8,16 @@
 
 namespace ecalph2 {
 
-class MultiFitTimingAlgoFactory {
- public:
-  MultiFitTimingAlgoFactory() {};
-  ~MultiFitTimingAlgoFactory() {};
+  class MultiFitTimingAlgoFactory {
+  public:
+    MultiFitTimingAlgoFactory() {};
+    ~MultiFitTimingAlgoFactory() {};
 
-  typedef std::unique_ptr<MultiFitTimingAlgo> ReturnType;
+    typedef std::unique_ptr<MultiFitTimingAlgo> ReturnType;
 
-  ReturnType create(const std::shared_ptr<ecalph2::EcalBcpPayloadParamsHelper> ecalBcpPayloadParamsHelper, const edm::EventSetup &eventSetup);
-};
+    ReturnType create(const std::shared_ptr<ecalph2::EcalBcpPayloadParamsHelper> ecalBcpPayloadParamsHelper,
+                      const edm::EventSetup &eventSetup);
+  };
 
-} // namespace ecalph2
+}  // namespace ecalph2
 #endif

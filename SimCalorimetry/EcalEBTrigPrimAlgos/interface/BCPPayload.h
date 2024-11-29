@@ -8,19 +8,23 @@
 
 namespace ecalph2 {
 
-class BCPPayload {
- public:
-  BCPPayload(const std::shared_ptr<ecalph2::EcalBcpPayloadParamsHelper> ecalBcpPayloadParamsHelper, const edm::EventSetup &eventSetup) : ecalBcpPayloadParamsHelper_(ecalBcpPayloadParamsHelper) {};
-  virtual ~BCPPayload() {};
+  class BCPPayload {
+  public:
+    BCPPayload(const std::shared_ptr<ecalph2::EcalBcpPayloadParamsHelper> ecalBcpPayloadParamsHelper,
+               const edm::EventSetup &eventSetup)
+        : ecalBcpPayloadParamsHelper_(ecalBcpPayloadParamsHelper) {};
+    virtual ~BCPPayload() {};
 
-  virtual void processEvent(const EBDigiCollection &ebDigis, EcalEBTrigPrimDigiCollection &ebTPs, std::vector<EcalEBTriggerPrimitiveCluster> &ebTPClusters) = 0;
+    virtual void processEvent(const EBDigiCollection &ebDigis,
+                              EcalEBTrigPrimDigiCollection &ebTPs,
+                              std::vector<EcalEBTriggerPrimitiveCluster> &ebTPClusters) = 0;
 
- protected:
-  // object holding the configuration
-  const std::shared_ptr<ecalph2::EcalBcpPayloadParamsHelper> ecalBcpPayloadParamsHelper_;
+  protected:
+    // object holding the configuration
+    const std::shared_ptr<ecalph2::EcalBcpPayloadParamsHelper> ecalBcpPayloadParamsHelper_;
 
-  virtual void createAlgos(const edm::EventSetup &eventSetup) = 0;
-};
+    virtual void createAlgos(const edm::EventSetup &eventSetup) = 0;
+  };
 
-} // namespace ecalph2
+}  // namespace ecalph2
 #endif

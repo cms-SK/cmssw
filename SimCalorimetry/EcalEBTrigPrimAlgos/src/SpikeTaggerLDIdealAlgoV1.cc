@@ -2,7 +2,7 @@
 /// \class ecalph2::SpikeTaggerLDIdealAlgoV1
 ///
 /// \author: Thomas Reis
-/// 
+///
 /// Version: V1
 /// Implements the ideal BCP linear discriminant spike tagger described in the
 /// ECAL phase 2 TDR.
@@ -15,12 +15,13 @@
 #include "SimCalorimetry/EcalEBTrigPrimAlgos/interface/EcalBcpPayloadParamsHelper.h"
 #include "SimCalorimetry/EcalEBTrigPrimAlgos/interface/SpikeTaggerLDIdealAlgoV1.h"
 
-ecalph2::SpikeTaggerLDIdealAlgoV1::SpikeTaggerLDIdealAlgoV1(const std::shared_ptr<ecalph2::EcalBcpPayloadParamsHelper> ecalBcpPayloadParamsHelper, const edm::EventSetup &eventSetup) : SpikeTaggerLDAlgo(ecalBcpPayloadParamsHelper, eventSetup)
-{
-}
+ecalph2::SpikeTaggerLDIdealAlgoV1::SpikeTaggerLDIdealAlgoV1(
+    const std::shared_ptr<ecalph2::EcalBcpPayloadParamsHelper> ecalBcpPayloadParamsHelper,
+    const edm::EventSetup &eventSetup)
+    : SpikeTaggerLDAlgo(ecalBcpPayloadParamsHelper, eventSetup) {}
 
-void ecalph2::SpikeTaggerLDIdealAlgoV1::processEvent(const EBDigiCollection &ebDigis, EcalEBTrigPrimDigiCollection &ebTPs)
-{
+void ecalph2::SpikeTaggerLDIdealAlgoV1::processEvent(const EBDigiCollection &ebDigis,
+                                                     EcalEBTrigPrimDigiCollection &ebTPs) {
   std::cout << "Processing SpikeTaggerLDIdealAlgoV1" << std::endl;
   std::cout << "This frame has size: " << ebDigis.size() << std::endl;
 
@@ -31,7 +32,7 @@ void ecalph2::SpikeTaggerLDIdealAlgoV1::processEvent(const EBDigiCollection &ebD
 
     // get the algo parameters for this crystal
     //TODO per crystal gains from ES
-    gains_ = { {12., 1., 2., 12.} }; // TIA gains (Currently old gain values. Phase 2 will have only two gains.)
+    gains_ = {{12., 1., 2., 12.}};  // TIA gains (Currently old gain values. Phase 2 will have only two gains.)
     peakIdx_ = ecalBcpPayloadParamsHelper_->sampleOfInterest(ebDigiId);
     spikeThreshold_ = ecalBcpPayloadParamsHelper_->spikeTaggerLdThreshold(ebDigiId);
     weights_ = ecalBcpPayloadParamsHelper_->spikeTaggerLdWeights(ebDigiId);
@@ -51,7 +52,8 @@ void ecalph2::SpikeTaggerLDIdealAlgoV1::processEvent(const EBDigiCollection &ebD
     auto encodedEt = ebTPPeakSample.encodedEt();
     auto l1aSpike = ebTPPeakSample.l1aSpike() | (ld < spikeThreshold_);
     auto time = ebTPPeakSample.time();
-    std::cout << "LD=" << ld << ", spike=" << (ld < spikeThreshold_) << ", ebTPPeakSample " << i << " encodedEt=" << encodedEt << ", l1aSpike=" << l1aSpike << ", time=" << time << std::endl;
+    std::cout << "LD=" << ld << ", spike=" << (ld < spikeThreshold_) << ", ebTPPeakSample " << i
+              << " encodedEt=" << encodedEt << ", l1aSpike=" << l1aSpike << ", time=" << time << std::endl;
     ebTPs[i].setSample(peakIdx_, EcalEBTriggerPrimitiveSample(encodedEt, l1aSpike, time));
     // setting the auxiliary data
     EcalEBTriggerPrimitiveAuxiliary tpAux;
@@ -60,8 +62,7 @@ void ecalph2::SpikeTaggerLDIdealAlgoV1::processEvent(const EBDigiCollection &ebD
   }
 }
 
-float ecalph2::SpikeTaggerLDIdealAlgoV1::calcLD(const EBDataFrame &frame) const
-{
+float ecalph2::SpikeTaggerLDIdealAlgoV1::calcLD(const EBDataFrame &frame) const {
   const auto sPlus1 = gains_[frame[peakIdx_ + 1].gainId()] * frame[peakIdx_ + 1].adc();
   const auto sMax = gains_[frame[peakIdx_].gainId()] * frame[peakIdx_].adc();
   const auto rPlus1 = sPlus1 / sMax;
@@ -69,8 +70,7 @@ float ecalph2::SpikeTaggerLDIdealAlgoV1::calcLD(const EBDataFrame &frame) const
   return rPlus1 - calcRMinus1Poly(frame);
 }
 
-float ecalph2::SpikeTaggerLDIdealAlgoV1::calcRMinus1Poly(const EBDataFrame &frame) const
-{
+float ecalph2::SpikeTaggerLDIdealAlgoV1::calcRMinus1Poly(const EBDataFrame &frame) const {
   const auto sMinus1 = gains_[frame[peakIdx_ - 1].gainId()] * frame[peakIdx_ - 1].adc();
   const auto sMax = gains_[frame[peakIdx_].gainId()] * frame[peakIdx_].adc();
   const auto rMinus1 = sMinus1 / sMax;

@@ -20,8 +20,8 @@
 #include "SimCalorimetry/EcalEBTrigPrimAlgos/interface/TPClusterAlgoV1.h"
 #include "SimCalorimetry/EcalEBTrigPrimAlgos/interface/TPClusterHLSAlgoV1.h"
 
-ecalph2::TPClusterAlgoFactory::ReturnType ecalph2::TPClusterAlgoFactory::create(const std::shared_ptr<ecalph2::EcalBcpPayloadParamsHelper> ecalBcpPayloadParamsHelper)
-{
+ecalph2::TPClusterAlgoFactory::ReturnType ecalph2::TPClusterAlgoFactory::create(
+    const std::shared_ptr<ecalph2::EcalBcpPayloadParamsHelper> ecalBcpPayloadParamsHelper) {
   ReturnType tpClusterAlgo;
 
   const auto algoType = ecalBcpPayloadParamsHelper->tpClusterAlgoType();
@@ -35,10 +35,12 @@ ecalph2::TPClusterAlgoFactory::ReturnType ecalph2::TPClusterAlgoFactory::create(
   // factory
   if (algoType == "crystalSumWithSwissCrossSpike") {
     if (fwVersion >= 1) {
-      edm::LogInfo("ecalph2::TPClusterAlgoFactory") << "Creating crystal sum TP clustering algo with swiss cross spike estimation for FW version " << fwStr;
+      edm::LogInfo("ecalph2::TPClusterAlgoFactory")
+          << "Creating crystal sum TP clustering algo with swiss cross spike estimation for FW version " << fwStr;
       tpClusterAlgo = std::make_unique<ecalph2::TPClusterAlgoV1>(ecalBcpPayloadParamsHelper);
     } else {
-      edm::LogError("ecalph2::TPClusterAlgoFactory") << "No crystal sum TP clustering algo with swiss cross spike estimation to create for FW version " << fwStr;
+      edm::LogError("ecalph2::TPClusterAlgoFactory")
+          << "No crystal sum TP clustering algo with swiss cross spike estimation to create for FW version " << fwStr;
     }
   } else if (algoType == "hls") {
     if (fwVersion >= 1) {
@@ -53,4 +55,3 @@ ecalph2::TPClusterAlgoFactory::ReturnType ecalph2::TPClusterAlgoFactory::create(
 
   return tpClusterAlgo;
 }
-

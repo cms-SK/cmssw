@@ -2,7 +2,7 @@
 /// \class ecalph2::SpikeTaggerLDHLSAlgoV1
 ///
 /// \author: Thomas Reis
-/// 
+///
 /// Version: V1
 /// Calls the HLS algorithm for the BCP linear discriminant spike tagger after preparing the data.
 ///
@@ -19,12 +19,13 @@
 
 using namespace ecalph2::hls::bcpspiketagger;
 
-ecalph2::SpikeTaggerLDHLSAlgoV1::SpikeTaggerLDHLSAlgoV1(const std::shared_ptr<ecalph2::EcalBcpPayloadParamsHelper> ecalBcpPayloadParamsHelper, const edm::EventSetup &eventSetup) : SpikeTaggerLDAlgo(ecalBcpPayloadParamsHelper, eventSetup)
-{
-}
+ecalph2::SpikeTaggerLDHLSAlgoV1::SpikeTaggerLDHLSAlgoV1(
+    const std::shared_ptr<ecalph2::EcalBcpPayloadParamsHelper> ecalBcpPayloadParamsHelper,
+    const edm::EventSetup &eventSetup)
+    : SpikeTaggerLDAlgo(ecalBcpPayloadParamsHelper, eventSetup) {}
 
-void ecalph2::SpikeTaggerLDHLSAlgoV1::processEvent(const EBDigiCollection &ebDigis, EcalEBTrigPrimDigiCollection &ebTPs)
-{
+void ecalph2::SpikeTaggerLDHLSAlgoV1::processEvent(const EBDigiCollection &ebDigis,
+                                                   EcalEBTrigPrimDigiCollection &ebTPs) {
   std::cout << "Processing SpikeTaggerLDHLSAlgoV1" << std::endl;
   // do not run if there are no inputs
   if (ebDigis.empty()) {
@@ -41,7 +42,6 @@ void ecalph2::SpikeTaggerLDHLSAlgoV1::processEvent(const EBDigiCollection &ebDig
 
   // loop over FPGAs, each processing nchannels
   for (size_t fpgaIdx = 0; fpgaIdx <= (ebDigis.size() - 1) / nchannels; ++fpgaIdx) {
-
     // three consecutive samples for all nchannels
     std::array<std::array<input::indata, nchannels>, 3> samplesArray;
     // loop over ebDigis of nchannels
@@ -52,7 +52,7 @@ void ecalph2::SpikeTaggerLDHLSAlgoV1::processEvent(const EBDigiCollection &ebDig
 
       // get the algo parameters for this crystal
       //TODO per crystal gains from ES
-      gains_ = { {12., 1., 2., 12.} }; // TIA gains (Currently old gain values. Phase 2 will have only two gains.)
+      gains_ = {{12., 1., 2., 12.}};  // TIA gains (Currently old gain values. Phase 2 will have only two gains.)
       peakIdx_ = ecalBcpPayloadParamsHelper_->sampleOfInterest(ebDigiId);
 
       // loop over three consecutive samples around the peak
@@ -63,14 +63,15 @@ void ecalph2::SpikeTaggerLDHLSAlgoV1::processEvent(const EBDigiCollection &ebDig
         //std::cout << "digi " << i << ", sample " << j << ": ADC counts=" << adcCounts << ", gain id=" << gainId << ", lin. counts=" << linearlisedCounts << std::endl;
         samplesArray[j - peakIdx_ + 1][i % nchannels].sample = static_cast<ap_uint<13>>(linearlisedCounts);
         samplesArray[j - peakIdx_ + 1][i % nchannels].first_sample = (j == peakIdx_ - 1);
-        j == peakIdx_ ? samplesArray[j - peakIdx_ + 1][i % nchannels].peak = true : samplesArray[j - peakIdx_ + 1][i % nchannels].peak = false;
+        j == peakIdx_ ? samplesArray[j - peakIdx_ + 1][i % nchannels].peak = true
+                      : samplesArray[j - peakIdx_ + 1][i % nchannels].peak = false;
       }
     }
 
     // Run the HLS findSpikes function.
     // After three calls of the function the output contains the spike flag calculated from the three samples.
     std::array<output::outdata, nchannels> sfOutput;
-    for (const auto& samples : samplesArray) {
+    for (const auto &samples : samplesArray) {
       std::cout << "running the HLS spike tagger algo" << std::endl;
       sfOutput = findSpikes(samples);
     }
@@ -82,9 +83,9 @@ void ecalph2::SpikeTaggerLDHLSAlgoV1::processEvent(const EBDigiCollection &ebDig
       auto encodedEt = ebTPPeakSample.encodedEt();
       auto l1aSpike = ebTPPeakSample.l1aSpike() | sfOutput[i % nchannels].spike;
       auto time = ebTPPeakSample.time();
-      std::cout << "ebTPPeakSample encodedEt=" << encodedEt << ", l1aSpike=" << l1aSpike << ", time=" << time << std::endl;
+      std::cout << "ebTPPeakSample encodedEt=" << encodedEt << ", l1aSpike=" << l1aSpike << ", time=" << time
+                << std::endl;
       ebTPs[i].setSample(peakIdx_, EcalEBTriggerPrimitiveSample(encodedEt, l1aSpike, time));
     }
   }
 }
-
