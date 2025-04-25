@@ -11,20 +11,20 @@
 #include <iostream>
 
 #include "ap_int.h"
-#include "EbSpikeTaggerLd.h"
+//#include "EbSpikeTaggerLd.h"
 #include "FWCore/MessageLogger/interface/MessageLogger.h"
 #include "CondFormats/DataRecord/interface/EcalBcpPayloadParamsRcd.h"
 #include "SimCalorimetry/EcalEBTrigPrimAlgos/interface/EcalBcpPayloadParamsHelper.h"
 #include "SimCalorimetry/EcalEBTrigPrimAlgos/interface/SpikeTaggerLDHLSAlgoV1.h"
 
-using namespace ecalph2::hls::bcpspiketagger;
+//using namespace ecalph2::hls::bcpspiketagger;
 
 ecalph2::SpikeTaggerLDHLSAlgoV1::SpikeTaggerLDHLSAlgoV1(const std::shared_ptr<ecalph2::EcalBcpPayloadParamsHelper> ecalBcpPayloadParamsHelper, const edm::EventSetup &eventSetup) : SpikeTaggerLDAlgo(ecalBcpPayloadParamsHelper, eventSetup)
 {
 }
 
 void ecalph2::SpikeTaggerLDHLSAlgoV1::processEvent(const EBDigiCollection &ebDigis, EcalEBTrigPrimDigiCollection &ebTPs)
-{
+{/*
   std::cout << "Processing SpikeTaggerLDHLSAlgoV1" << std::endl;
   // do not run if there are no inputs
   if (ebDigis.empty()) {
@@ -85,6 +85,6 @@ void ecalph2::SpikeTaggerLDHLSAlgoV1::processEvent(const EBDigiCollection &ebDig
       std::cout << "ebTPPeakSample encodedEt=" << encodedEt << ", l1aSpike=" << l1aSpike << ", time=" << time << std::endl;
       ebTPs[i].setSample(peakIdx_, EcalEBTriggerPrimitiveSample(encodedEt, l1aSpike, time));
     }
-  }
+  }*/
 }
 
