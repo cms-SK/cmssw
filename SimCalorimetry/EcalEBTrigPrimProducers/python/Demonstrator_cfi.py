@@ -7,8 +7,17 @@ DemonstratorSK_params = cms.PSet (
   InputTag       = cms.InputTag( "simEcalUnsuppressedDigis" ),      # inout tag for ecal barrel adc counts
 
   InfraGap       = cms.int32( 6 ),                                  # number of clock tics between pakets
-  PacketSize     = cms.int32( 6 ),                                  # packet size in BX
+  NumEvents      = cms.int32( 6 ),                                  # packet size in BX
   NumFramesBX    = cms.int32( 9 ),                                  # number of clock tics per bx
+
+  NumTotal       = cms.int32( 61200 ),                              # total number of ADCs
+  NumCounts      = cms.int32(    16 ),                              # number of samples per ADC
+
+  PedestalADC    = cms.int32  ( 12   ),                             # ADC counter offset
+  ThresholdPeak  = cms.int32  ( 10   ),                             # adc count offest above noise
+  ThresholdLD    = cms.double ( -0.1 ),                             #
+  WeightsLD      = cms.vdouble( 1.5173, -2.1034, 1.8117 ),          #
+
 
   NumSamples     = cms.int32(  4 ),                                 # number of samples per bx
   WidthADC       = cms.int32( 14 ),                                 # number of bits used per ADC count
@@ -25,7 +34,7 @@ DemonstratorSK_params = cms.PSet (
   ChannelsOut    = cms.vint32(),                                    # output channel maping, leave blank for default maping
 
   RunTime        = cms.double( 2.5 ),                               # modelsim simulatio time in us
-  Dir            = cms.string( "/heplnw039/tschuh/work/proj/sk/" ), # path to ipbb project area
+  Dir            = cms.string( "/heplnw039/tschuh/work/proj/ld/" ), # path to ipbb project area
   txtInput       = cms.string( "in.txt"   ),                        # file name containing input data
   txtOutputSim   = cms.string( "sim.txt"  ),                        # file name containing simulated output data
   txtOutputEmu   = cms.string( "emu.txt"  ),                        # file name containing emulated output data
