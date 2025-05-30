@@ -36,7 +36,7 @@ DemonstratorSK_params = cms.PSet (
   RunTime        = cms.double( 2.5 ),                               # modelsim simulatio time in us
   Dir            = cms.string( "/heplnw039/tschuh/work/proj/ld/" ), # path to ipbb project area
   txtInput       = cms.string( "in.txt"   ),                        # file name containing input data
-  txtOutputSim   = cms.string( "sim.txt"  ),                        # file name containing simulated output data
+  txtOutputSim   = cms.string( "out.txt"  ),                        # file name containing simulated output data
   txtOutputEmu   = cms.string( "emu.txt"  ),                        # file name containing emulated output data
   txtOutputDiff  = cms.string( "diff.txt" ),                        # file name containing sim vs emu diff output
 

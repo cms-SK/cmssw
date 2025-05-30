@@ -213,6 +213,7 @@ namespace sk {
     // process packet
     analyze();
     // clear data container
+    iEvent_ = 0;
     for (std::vector<std::vector<int>>& event : input_)
       for (std::vector<int>& adc : event)
         adc.clear();
@@ -309,8 +310,6 @@ namespace sk {
     std::vector<std::vector<int>> adcs(numADCs_);
     for (std::vector<int>& adc : adcs)
       adc.reserve(sizePacket_ + 1);
-    for (std::vector<int>& adc : adcs)
-      adc.push_back(0);
     for (int iSample = 0; iSample < sizePacket_; iSample++) {
       const int offsetFrame = iSample * numSlicesADC_;
       for (int iChannel = 0; iChannel < static_cast<int>(channelsIn_.size()); iChannel++) {
@@ -334,14 +333,14 @@ namespace sk {
       }
     }
     for (std::vector<int>& adc : adcs)
-      adc[0] = adc.back();
+      adc.push_back(adc.front());
     // emulate adc by adc
     std::vector<TTBV> lds(numADCs_, TTBV(0, sizePacket_));
-    for (int iADC = numADCs_ - 2; iADC < numADCs_; iADC++) {
+    for (int iADC = 0; iADC < numADCs_; iADC++) {
       const std::vector<int>& adc = adcs[iADC];
       TTBV& ld = lds[iADC];
       for (int iEvent = 0; iEvent < numEvents_; iEvent++) {
-        const int offset = iEvent * numSamples_ + 1;
+        const int offset = iEvent * numSamples_;
         bool first = true;
         int iSample = (iEvent > 0 ? 0 : 1);
         for (; iSample < numSamples_; iSample++) {
