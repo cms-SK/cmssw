@@ -45,6 +45,38 @@ namespace sk {
     void analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup) override;
 
   private:
+    // struct to represent a peak
+    struct Peak {
+      Peak() {}
+      Peak(int frame, const std::vector<int>& adc) : frame_(frame), front_(adc[frame - 1]), middle_(adc[frame]), back_(adc[frame + 1]) {
+        valid_ = middle_ > front_ && middle_ >= back_;
+      }
+      // return true is peak structure above threshold found
+      bool valid(int threshold) const { return valid_ && middle_ > threshold; }
+      // reuces accuracy of adc counts if those are large
+      void reduce(int width) {
+        const int w = std::ceil(std::log2(middle_));
+        if (w < width)
+          return;
+        const int div = pow(2, w - width);
+        front_ /= div;
+        middle_ /= div;
+        back_ /= div;
+      }
+      // returns ld flag for given threshold and weights
+      bool spike(double threshold, const std::vector<double>& weights) const {
+        const int LUT0 = std::floor((middle_ + .5) * (threshold + weights[0]));
+        const int LUT1 = std::floor((back_ + .5) * weights[1]);
+        const int LUT2 = std::floor((back_ + .5) * (back_ + .5) * weights[2]);
+        const double dsp = (middle_ + .5) * ((LUT1 + .5) - (front_ + .5) + (LUT0 + .5)) + (LUT2 + .5);
+        return dsp < 0.;
+      }
+      bool valid_ = false;
+      int frame_ = 0;
+      int front_ = 0;
+      int middle_ = 0;
+      int back_ = 0;
+    };
     // analyze event packet
     void analyze() const;
     // find interesting crystals
@@ -95,6 +127,8 @@ namespace sk {
     int widthADC_;
     // number of bits used per SK flag
     int widthSK_;
+    // reduced number of dynamic msbs used for ADC counts during calculations
+    int widthReduced_;
     // number of ADCs
     int numADCs_;
     // number of ADC counts muxed to one channel
@@ -150,6 +184,7 @@ namespace sk {
         numSamples_(iConfig.getParameter<int>("NumSamples")),
         widthADC_(iConfig.getParameter<int>("WidthADC")),
         widthSK_(iConfig.getParameter<int>("WidthSK")),
+        widthReduced_(iConfig.getParameter<int>("WidthReduced")),
         numADCs_(iConfig.getParameter<int>("NumADCs")),
         muxedADCs_(iConfig.getParameter<int>("MuxedADCs")),
         muxedSKs_(iConfig.getParameter<int>("MuxedSKs")),
@@ -341,24 +376,19 @@ namespace sk {
       TTBV& ld = lds[iADC];
       for (int iEvent = 0; iEvent < numEvents_; iEvent++) {
         const int offset = iEvent * numSamples_;
-        bool first = true;
         int iSample = (iEvent > 0 ? 0 : 1);
+        // find largest peak
+        Peak last;
         for (; iSample < numSamples_; iSample++) {
-          const int iFrame = offset + iSample;
-          const int front = adc[iFrame - 1];
-          const int middle = adc[iFrame];
-          const int back = adc[iFrame + 1];
-          const bool peak = middle > thresholdPeak_ && middle > front && middle >= back;
-          if (!peak || !first)
-            continue;
-          first = false;
-          const int LUT0 = std::floor((middle + .5) * (thresholdLD_ + weightsLD_[0]));
-          const int LUT1 = std::floor((back + .5) * weightsLD_[1]);
-          const int LUT2 = std::floor((back + .5) * (back + .5) * weightsLD_[2]);
-          const double dsp = (middle + .5) * ((LUT1 + .5) - (front + .5) + (LUT0 + .5)) + (LUT2 + .5);
-          if (dsp < 0.)
-            ld.set(iFrame);
+          const Peak peak(offset + iSample, adc);
+          if (peak.valid(thresholdPeak_) && (!last.valid_ || peak.middle_ > last.middle_))
+            last = peak;
         }
+        // reduce adc counts if necessary
+        last.reduce(widthReduced_);
+        // evaluate and set spike flag
+        if (last.valid_ && last.spike(thresholdLD_, weightsLD_))
+          ld.set(last.frame_);
       }
     }
     // fill output

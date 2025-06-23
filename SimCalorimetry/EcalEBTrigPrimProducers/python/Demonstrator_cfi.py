@@ -18,10 +18,10 @@ DemonstratorSK_params = cms.PSet (
   ThresholdLD    = cms.double ( -0.1 ),                             #
   WeightsLD      = cms.vdouble( 1.5173, -2.1034, 1.8117 ),          #
 
-
   NumSamples     = cms.int32(  4 ),                                 # number of samples per bx
   WidthADC       = cms.int32( 14 ),                                 # number of bits used per ADC count
   WidthSK        = cms.int32(  1 ),                                 # number of bits used per SK flag
+  WidthReduced  =  cms.int32(  8 ),                                 # reduced number of dynamic msbs used for ADC counts during calculations
 
   NumADCs        = cms.int32( 75 ),                                 # number of ADCs
   MuxedADCs      = cms.int32(  5 ),                                 # number of ADC counts muxed to one channel
